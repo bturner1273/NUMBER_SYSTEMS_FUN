@@ -8,6 +8,7 @@ $(function(){
     var HEXADECIMAL_REGEX = /^[0-9A-Fa-f]*$/;
 
     $("#input_text_area").bind("input", function(){
+        var output_text_area = $("#output_text_area");
         if($("#input_text_area").val().trim().length != 0 && $("#input_text_area").val() != null){
             if(input_format === format.BINARY){
                 if(!BINARY_REGEX.test($("#input_text_area").val().trim())){
@@ -22,26 +23,28 @@ $(function(){
                 }
             }
             if(input_format === output_format){
-                $("#output_text_area").val($("#input_text_area").val());
+                output_text_area.val($("#input_text_area").val());
             }
             if(input_format === format.BINARY && output_format === format.HEXADECIMAL){
-                $("#output_text_area").val(parseInt(Number($("#input_text_area").val()), 2).toString(16).toUpperCase());
+                output_text_area.val(parseInt(Number($("#input_text_area").val()), 2).toString(16).toUpperCase());
             }
             if(input_format === format.HEXADECIMAL && output_format === format.BINARY){
-                $("#output_text_area").val(parseInt($("#input_text_area").val(), 16).toString(2));
+                output_text_area.val(parseInt($("#input_text_area").val(), 16).toString(2));
             }
             if(input_format === format.ASCII && output_format === format.BINARY){
-                $("#output_text_area").val(ascii_to_base(2));
+                output_text_area.val(ascii_to_base(2));
             }
             if(input_format === format.ASCII && output_format === format.HEXADECIMAL){
-                $("#output_text_area").val(ascii_to_base(16));
+                output_text_area.val(ascii_to_base(16));
             }
             if(input_format === format.BINARY && output_format === format.ASCII){
-                $("#output_text_area").val(base2_to_ascii());
+                output_text_area.val(base2_to_ascii());
             }
             if(input_format === format.HEXADECIMAL && output_format === format.ASCII){
-                $("#output_text_area").val(base16_to_ascii());
+                output_text_area.val(base16_to_ascii());
             }
+        } else {
+            output_text_area.val("");
         }
     });
 
