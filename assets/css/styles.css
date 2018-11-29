@@ -1,0 +1,23 @@
+html{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    height: 100%;
+    width: 100%;
+}
+
+.row{
+    height: 100%;
+    width: 100%;
+    padding-left: 25px;
+}
+
+.input-group{
+    margin-top: 10px;
+}
+
+label{
+    margin-right: 15px;
+}
