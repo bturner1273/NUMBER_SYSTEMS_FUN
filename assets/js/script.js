@@ -78,7 +78,6 @@ $(function(){
 
     function bind_radios_labels_foolproof(_class, slice_start, slice_end){
         $('input[type=radio]').slice(slice_start, slice_end).change(function () {
-            $("#input_text_area").val("");
             $("#output_text_area").val("");
             var enum_lookup_string;
               switch($(this).val()){
@@ -97,7 +96,10 @@ $(function(){
               }
               if(slice_end <= 3){
                   input_format = format[enum_lookup_string];
-              }else output_format = format[enum_lookup_string];
+              }else {
+                  output_format = format[enum_lookup_string];
+                  $("#input_text_area").trigger("input");
+              }
         });
     }
 
