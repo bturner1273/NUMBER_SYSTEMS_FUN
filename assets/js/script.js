@@ -182,6 +182,7 @@ $(function(){
                             strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]] + " ";
                         }
                     }
+                    strResult = strResult.replace(/undefined/g, "?");
                     $("#custom_encoding_output").html(strResult);
                 }else $("#custom_encoding_output").html("");
             }
@@ -195,6 +196,7 @@ $(function(){
                         result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]] + " ";
                     }
                 }
+                result = result.replace(/undefined/g, "?");
                 $("#custom_encoding_output").html(result);
             }else $("#custom_encoding_output").html("");
         }
@@ -249,7 +251,10 @@ $(function(){
         var keyboardHandler = {
             handleKeyboard: function(data,hash,keyString,keyCode,event){
                 if(editor.getReadOnly()){
-                    alert("You must have keys and values set before entering text to the encoding area");
+                    var input = String.fromCharCode(keyCode);
+                    if(input != "" && input != null){
+                        alert("You must have keys and values set before entering text to the encoding area");
+                    }
                 }
                 if(keyCode == 8){
                     var output = $("#custom_encoding_output");
@@ -286,14 +291,26 @@ $(function(){
     }
 
     $("#submit_encoding").click(function(){
-        if(custom_bits_input.val().trim().length == custom_encoding_num_bits && custom_values_input.val().trim().length > 0){
+        if(custom_bits_input.val().trim().length == custom_encoding_num_bits && custom_values_input.val().trim().length === 1){
+            var invalid_encoding = false;
+            $("#encodings_table tr").each(function(){
+                if($(this).find(".encoding").html() == custom_bits_input.val().trim()){
+                    alert("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
+                    invalid_encoding = true;
+                }
+            });
+            if(invalid_encoding){
+                custom_bits_input.val("");
+                custom_values_input.val("");
+                return;
+            }
             encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + custom_values_input.val() + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
             bindLastTRButton();
             encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().trim();
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
             editor.setReadOnly(false);
         }else{
-            alert("Your number of bits must match the bit length you set and you must have a value for the encoding key");
+            alert("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
         }
         custom_bits_input.val("");
         custom_values_input.val("");
