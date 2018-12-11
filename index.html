@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title></title>
+        <link rel="stylesheet" href="https://oyoclass.s3.amazonaws.com/fontawesome-pro-5.0.13/web-fonts-with-css/css/fontawesome-all.min.css">
     </head>
     <body>
         <div class="row">
@@ -40,9 +41,59 @@
                   </div>
                 </div>
             </div>
+            <div class="col-lg-12 col-xs-12">
+                <div class="card">
+                  <h5 class="card-header">Custom Encoding</h5>
+                  <div class="card-body row">
+                      <div class="col-lg-4 col-xs-12">
+                          <strong>Bits in Encoding: </strong><span id="custom_encoding_num_bits">1</span>
+                          <div class="slidecontainer">
+                              <input id="bit_range" class="slider" type="range" min="1" max="8" value="1" name="" value="">
+                          </div>
+                          <table id="encodings_table" class="table table-striped">
+                              <thead>
+                                 <tr>
+                                     <th>Key</th>
+                                     <th>Value</th>
+                                     <th>Edit</th>
+                                 </tr>
+                              </thead>
+                          </table>
+                          <table class="col-lg-12 col-xs-12">
+                              <tr>
+                                  <td>
+                                      <input id="custom_bits_input" type="text" class="form-control" name="" value="" placeholder="1 BIT(s)">
+                                  </td>
+                                  <td rowspan="2">
+                                      <button id="submit_encoding" type="button" name="button" class="btn btn-primary float-right"><i class="fas fa-plus"></i></button>
+                                  </td>
+                              </tr>
+                              <tr>
+                                 <td>
+                                     <input id="custom_values_input" type="text" class="form-control" name="" value="" placeholder="VALUE">
+                                 </td>
+                              </tr>
+                          </table>
+                          <h5 class="card-title">Format:</h5>
+                          <label><input id="keyToValRadio" type="radio" name="custom_encoding_output-format" value="0" checked>Key -> Value</label>
+                          <label><input id="valToKeyRadio" type="radio" name="custom_encoding_output-format" value="1">Value -> Key</label>
+                      </div>
+                      <div class="col-lg-4 col-xs-12" id="editor">
+`
+                      </div>
+                      <div class="col-lg-4 col-xs-12" id="output">
+                          <textarea id="custom_encoding_output" class="form-control" readonly></textarea>
+                      </div>
+                  </div>
+                </div>
+            </div>
         </div>
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://oyoclass.s3.amazonaws.com/lib/jqueryui/1.11.0/jquery-ui.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"></script>
         <script type="text/javascript" src="assets/js/script.js"></script>
         <link rel="stylesheet" href="assets/css/styles.css">
     </body>
