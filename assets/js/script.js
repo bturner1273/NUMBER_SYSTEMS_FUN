@@ -94,15 +94,15 @@ $(function(){
               switch($(this).val()){
                   case "1":
                         enum_lookup_string = "BINARY";
-                        $(_class).html(enum_lookup_string);
+                        $(_class).text(enum_lookup_string);
                         break;
                   case "2":
                         enum_lookup_string = "HEXADECIMAL";
-                        $(_class).html(enum_lookup_string);
+                        $(_class).text(enum_lookup_string);
                         break;
                   default:
                         enum_lookup_string = "ASCII";
-                        $(_class).html(enum_lookup_string);
+                        $(_class).text(enum_lookup_string);
                         break;
               }
               if(slice_end <= 3){
@@ -134,8 +134,8 @@ $(function(){
     var encodings_table = $("#encodings_table");
 
     $($("#bit_range").get(0)).slider().on('change', function(){
-        $("#custom_encoding_num_bits").html(this.value);
-        custom_encoding_num_bits = Number($("#custom_encoding_num_bits").html());
+        $("#custom_encoding_num_bits").text(this.value);
+        custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
         $("#custom_bits_input").attr("placeholder", this.value + " BIT(s)");
         loadEncodingTable();
     });
@@ -159,6 +159,7 @@ $(function(){
         sorted_keys = sorted_keys.sort();
         for(var j in sorted_keys){
             encodings_table.append("<tr><td>" + sorted_keys[j] +"</td><td>" + dict_to_load[sorted_keys[j].trim()] + "</td><td><button class='btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+            bindLastTRButton();
         }
     }
 
@@ -183,8 +184,8 @@ $(function(){
                         }
                     }
                     strResult = strResult.replace(/undefined/g, "?");
-                    $("#custom_encoding_output").html(strResult);
-                }else $("#custom_encoding_output").html("");
+                    $("#custom_encoding_output").text(strResult);
+                }else $("#custom_encoding_output").text("");
             }
         }
         if(custom_encoding_format === indices.VALUE_TO_KEY){
@@ -197,8 +198,8 @@ $(function(){
                     }
                 }
                 result = result.replace(/undefined/g, "?");
-                $("#custom_encoding_output").html(result);
-            }else $("#custom_encoding_output").html("");
+                $("#custom_encoding_output").text(result);
+            }else $("#custom_encoding_output").text("");
         }
     }
 
@@ -258,7 +259,7 @@ $(function(){
                 }
                 if(keyCode == 8){
                     var output = $("#custom_encoding_output");
-                    output.html(output.html().slice(0,output.html().length-2));
+                    output.text(output.text().slice(0,output.text().length-2));
                 }
             }
         };
@@ -272,7 +273,7 @@ $(function(){
             alert("You must write valid binary digits (1 and 0 only)");
             custom_bits_input.val("");
         }
-        custom_encoding_num_bits = Number($("#custom_encoding_num_bits").html());
+        custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
         if(custom_bits_input.val().length > custom_encoding_num_bits && custom_bits_input.val().length != 0){
             alert("Your encoding cannot be longer than the bit length you set");
             custom_bits_input.val(custom_bits_input.val().slice(0, custom_encoding_num_bits));
@@ -281,8 +282,8 @@ $(function(){
 
     function bindLastTRButton(){
         $("#encodings_table button").last().click(function(){
-            delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").html().trim()];
-            delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").html().trim()];
+            delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+            delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
             $(this).closest("tr").remove();
             if($("#encodings_table tr").length < 2){
                 editor.setReadOnly(true);
@@ -294,7 +295,7 @@ $(function(){
         if(custom_bits_input.val().trim().length == custom_encoding_num_bits && custom_values_input.val().trim().length === 1){
             var invalid_encoding = false;
             $("#encodings_table tr").each(function(){
-                if($(this).find(".encoding").html() == custom_bits_input.val().trim()){
+                if($(this).find(".encoding").text() == custom_bits_input.val().trim()){
                     alert("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
                     invalid_encoding = true;
                 }
