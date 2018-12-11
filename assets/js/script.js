@@ -51,7 +51,7 @@ $(function(){
     });
 
     function base2_to_ascii(){
-        var list = $("#input_text_area").val().trim().match(/.{1,7}/g);
+        var list = $("#input_text_area").val().trim().match(/.{1,8}/g);
         if(list != null){
             var toReturn = "";
             for(var i = 0; i < list.length; i++){
