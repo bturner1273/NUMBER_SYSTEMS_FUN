@@ -167,39 +167,36 @@ $(function(){
     });
 
     function updateEncodingOutputText(){
-        if(editor.getValue() !== null && editor.getValue() !== ""){
-            if(custom_encoding_format === indices.KEY_TO_VALUE){
-                if(!BINARY_REGEX.test(editor.getValue().replace(/\s/gi, ""))){
-                    alert("You must enter valid binary digits (1 or 0) when in Key -> Value format");
-                    editor.setValue(editor.getValue().slice(0,editor.getValue().length-1));
-                }else{
-                    var regex = getRegex();
-                    var keyList = editor.getValue().trim().match(regex);
-                    var strResult = "";
-                    if(keyList){
-                        for(var i = 0; i < keyList.length; i++){
-                            if(encodings[custom_encoding_num_bits]){
-                                strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]] + " ";
-                            }
-                        }
-                        $("#custom_encoding_output").html(strResult);
-                    }else $("#custom_encoding_output").html("");
-                }
-            }
-            if(custom_encoding_format === indices.VALUE_TO_KEY){
-                var valueList = editor.getValue().trim().match(/.{1,1}/g);
-                var result = "";
-                if(valueList){
-                    for(var j = 0; j < valueList.length; j++){
+        if(custom_encoding_format === indices.KEY_TO_VALUE){
+            if(editor.getValue() !== null && editor.getValue() !== "")
+            if(!BINARY_REGEX.test(editor.getValue().replace(/\s/gi, ""))){
+                alert("You must enter valid binary digits (1 or 0) when in Key -> Value format");
+                editor.setValue(editor.getValue().slice(0,editor.getValue().length-1));
+            }else{
+                var regex = getRegex();
+                var keyList = editor.getValue().trim().match(regex);
+                var strResult = "";
+                if(keyList){
+                    for(var i = 0; i < keyList.length; i++){
                         if(encodings[custom_encoding_num_bits]){
-                            result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]] + " ";
+                            strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]] + " ";
                         }
                     }
-                    $("#custom_encoding_output").html(result);
+                    $("#custom_encoding_output").html(strResult);
                 }else $("#custom_encoding_output").html("");
             }
-        }else{
-            $("#custom_encoding_output").html();
+        }
+        if(custom_encoding_format === indices.VALUE_TO_KEY){
+            var valueList = editor.getValue().trim().match(/.{1,1}/g);
+            var result = "";
+            if(valueList){
+                for(var j = 0; j < valueList.length; j++){
+                    if(encodings[custom_encoding_num_bits]){
+                        result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]] + " ";
+                    }
+                }
+                $("#custom_encoding_output").html(result);
+            }else $("#custom_encoding_output").html("");
         }
     }
 
@@ -251,11 +248,16 @@ $(function(){
         editor.setValue("");
         var keyboardHandler = {
             handleKeyboard: function(data,hash,keyString,keyCode,event){
+                if(editor.getReadOnly()){
+                    alert("You must have keys and values set before entering text to the encoding area");
+                }
                 if(keyCode == 8){
-                    updateEncodingOutputText();
+                    var output = $("#custom_encoding_output");
+                    output.html(output.html().slice(0,output.html().length-2));
                 }
             }
         };
+        editor.setReadOnly(true);
         editor.keyBinding.addKeyboardHandler(keyboardHandler);
         $("#editor").show();
     }
@@ -277,6 +279,9 @@ $(function(){
             delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").html().trim()];
             delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").html().trim()];
             $(this).closest("tr").remove();
+            if($("#encodings_table tr").length < 2){
+                editor.setReadOnly(true);
+            }
         });
     }
 
@@ -286,6 +291,7 @@ $(function(){
             bindLastTRButton();
             encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().trim();
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
+            editor.setReadOnly(false);
         }else{
             alert("Your number of bits must match the bit length you set and you must have a value for the encoding key");
         }
