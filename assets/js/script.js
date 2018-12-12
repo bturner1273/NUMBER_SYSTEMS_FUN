@@ -14,13 +14,13 @@ $(function(){
         if($("#input_text_area").val().trim().length != 0 && $("#input_text_area").val() != null){
             if(input_format === format.BINARY){
                 if(!BINARY_REGEX.test($("#input_text_area").val().trim())){
-                    alert("You must write valid binary if you choose to use it as your input format (1 and 0 only)");
+                    notify.err("You must write valid binary if you choose to use it as your input format (1 and 0 only)");
                     $("#input_text_area").val($("#input_text_area").val().slice(0, $("#input_text_area").val().length-1));
                 }
             }
             if(input_format === format.HEXADECIMAL){
                 if(!HEXADECIMAL_REGEX.test($("#input_text_area").val().trim())){
-                    alert("You must write valid hex if you choose to use it as your input format (0-9, a-f, and A-F only)");
+                    notify.err("You must write valid hex if you choose to use it as your input format (0-9, a-f, and A-F only)");
                     $("#input_text_area").val($("#input_text_area").val().slice(0, $("#input_text_area").val().length-1));
                 }
             }
@@ -171,7 +171,7 @@ $(function(){
         if(custom_encoding_format === indices.KEY_TO_VALUE){
             if(editor.getValue() !== null && editor.getValue() !== "")
             if(!BINARY_REGEX.test(editor.getValue().replace(/\s/gi, ""))){
-                alert("You must enter valid binary digits (1 or 0) when in Key -> Value format");
+                notify.err("You must enter valid binary digits (1 or 0) when in Key -> Value format");
                 editor.setValue(editor.getValue().slice(0,editor.getValue().length-1));
             }else{
                 var regex = getRegex();
@@ -254,7 +254,7 @@ $(function(){
                 if(editor.getReadOnly()){
                     var input = String.fromCharCode(keyCode);
                     if(input != "" && input != null){
-                        alert("You must have keys and values set before entering text to the encoding area");
+                        notify.err("You must have keys and values set before entering text to the encoding area");
                     }
                 }
                 if(keyCode == 8){
@@ -270,12 +270,12 @@ $(function(){
 
     custom_bits_input.bind("input", function(){
         if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
-            alert("You must write valid binary digits (1 and 0 only)");
+            notify.err("You must write valid binary digits (1 and 0 only)")
             custom_bits_input.val("");
         }
         custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
         if(custom_bits_input.val().length > custom_encoding_num_bits && custom_bits_input.val().length != 0){
-            alert("Your encoding cannot be longer than the bit length you set");
+            notify.err("Your encoding cannot be larger than the bit length you set");
             custom_bits_input.val(custom_bits_input.val().slice(0, custom_encoding_num_bits));
         }
     });
@@ -296,7 +296,7 @@ $(function(){
             var invalid_encoding = false;
             $("#encodings_table tr").each(function(){
                 if($(this).find(".encoding").text() == custom_bits_input.val().trim()){
-                    alert("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
+                    notify.err("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
                     invalid_encoding = true;
                 }
             });
@@ -311,14 +311,35 @@ $(function(){
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
             editor.setReadOnly(false);
         }else{
-            alert("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
+            notify.err("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
         }
         custom_bits_input.val("");
         custom_values_input.val("");
     });
 
-
-
     // END CUSTOM ENCODING BOX CODE
+
+    // NOTY FUNCTIONALITY
+    var notify = (function () {
+    var suc, err;
+    suc = function (txt, timeout, manualclose) {
+        var n = noty({text: "<b>" + txt + "</b>", type: "success", layout: "topCenter"});
+        if (!manualclose) {
+            setTimeout(function () {n.close(); }, timeout === undefined ? 2000 : timeout);
+        }
+    };
+
+    err = function (txt, timeout, manualclose) {
+        var n = noty({text: "<b>" + txt + "</b>", type: "error", layout: "topCenter"});
+        if (!manualclose) {
+            setTimeout(function () {n.close(); }, timeout === undefined ? 3000 : timeout);
+        }
+    };
+
+    return {
+        suc: suc,
+        err: err
+    };
+    }());
 
 });
