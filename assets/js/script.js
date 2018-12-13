@@ -86,8 +86,13 @@ $(function(){
                     }else{
                         toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
                     }
-                }else toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
-
+                }else if(base == 16){
+                    if(input_val[i].charCodeAt(0).toString(base).length < 2){
+                        toReturn += "0".repeat(2 - input_val[i].charCodeAt(0).toString(base).length)+input_val[i].charCodeAt(0).toString(base) + " ";
+                    }else{
+                        toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
+                    }
+                }
             }
             return toReturn;
         }
@@ -114,6 +119,7 @@ $(function(){
               }
               if(slice_end <= 3){
                   input_format = format[enum_lookup_string];
+                  $("#input_text_area").val("");
               }else {
                   output_format = format[enum_lookup_string];
                   $("#input_text_area").trigger("input");
@@ -303,7 +309,7 @@ $(function(){
     }
 
     $("#submit_encoding").click(function(){
-        if(custom_bits_input.val().trim().length == custom_encoding_num_bits && custom_values_input.val().trim().length === 1){
+        if(custom_bits_input.val().trim().length == custom_encoding_num_bits){
             var invalid_encoding = false;
             $("#encodings_table tr").each(function(){
                 if($(this).find(".encoding").text() == custom_bits_input.val().trim()){
@@ -316,9 +322,9 @@ $(function(){
                 custom_values_input.val("");
                 return;
             }
-            encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + custom_values_input.val() + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+            encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + custom_values_input.val().charAt(0) + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
             bindLastTRButton();
-            encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().trim();
+            encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
             editor.setReadOnly(false);
         }else{
