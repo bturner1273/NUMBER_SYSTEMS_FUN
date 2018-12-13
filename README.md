@@ -1,9 +1,6 @@
 TODO:
 
-2. trim() does not get rid of spaces in between parts of a string only leading and trailing
-    use //s/g regex with replace instead
+1. don't add spaces between key->value translation unless a spaces
+    is encoded in the table and is present in the input of the encoding
 
-4. new line character breaks hex encoding
-5. use noty.js to notify user of bad actions taken in the website instead of alerts because they are shitty
-6. don't trim custom val input, just take first char
-    
+2. custom encodings input can have spaces for key to value and value to keys

@@ -181,6 +181,7 @@ $(function(){
     });
 
     function updateEncodingOutputText(){
+        console.log(custom_encoding_format)
         if(custom_encoding_format === indices.KEY_TO_VALUE){
             if(editor.getValue() !== null && editor.getValue() !== "")
             if(!BINARY_REGEX.test(editor.getValue().replace(/\s/gi, ""))){
@@ -249,10 +250,12 @@ $(function(){
 
     $("#keyToValRadio").click(function(){
         custom_encoding_format = indices.KEY_TO_VALUE;
+        editor.setValue("");
     });
 
     $("#valToKeyRadio").click(function(){
         custom_encoding_format = indices.VALUE_TO_KEY;
+        editor.setValue("");
     });
 
     function setUpEditor() {
@@ -272,12 +275,16 @@ $(function(){
                 }
                 if(keyCode == 8){
                     var output = $("#custom_encoding_output");
+                    if(output.text().replace(/\s/gi,"").trim().length === 1){
+                        output.text("");
+                    }
                     if(custom_encoding_format == indices.KEY_TO_VALUE){ //only subtract from string length - 2* custom encoding bit length if it is value to key
                         output.text(output.text().slice(0,output.text().length - 2));
                     }else{
                         output.text(output.text().slice(0,output.text().length-((2*custom_encoding_num_bits)-1)));
                     }
                 }
+                updateEncodingOutputText();
             }
         };
         editor.setReadOnly(true);
@@ -332,6 +339,27 @@ $(function(){
         }
         custom_bits_input.val("");
         custom_values_input.val("");
+    });
+
+    $("#copy_encoding").click(function(){
+        var encoding_output = $("#custom_encoding_output");
+        encoding_output.select();
+        document.execCommand("copy");
+        notify.suc(encoding_output.val() + " copied to clipboard!");
+    });
+
+    $("#swap_encoding").click(function(){
+        var encoding_output = $("#custom_encoding_output");
+        var encoding_input = editor;
+        if($("#valToKeyRadio").is(':checked')){
+            custom_encoding_format = indices.KEY_TO_VALUE;
+            $("#keyToValRadio").prop('checked', true);
+        }else {
+            custom_encoding_format = indices.VALUE_TO_KEY;
+            $("#valToKeyRadio").prop('checked', true);
+        }
+
+        encoding_input.setValue(encoding_output.val());
     });
 
     // END CUSTOM ENCODING BOX CODE

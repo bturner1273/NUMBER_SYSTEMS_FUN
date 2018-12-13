@@ -80,11 +80,13 @@
                           <label><input id="keyToValRadio" type="radio" name="custom_encoding_output-format" value="0" checked>Key -> Value</label>
                           <label><input id="valToKeyRadio" type="radio" name="custom_encoding_output-format" value="1">Value -> Key</label>
                       </div>
-                      <div class="col-lg-4 col-xs-12" id="editor">
-`
-                      </div>
-                      <div class="col-lg-4 col-xs-12" id="output">
+                      <div class="col-lg-4 col-xs-12" id="editor"></div>
+                      <button id="swap_encoding" type="button" class=" col-lg-.5 col-xs-12 btn btn-sm btn-primary" name="button" style="height:50px; margin-top:10%; margin-left:15px;">
+                          <i class="fas fa-arrow-left"></i>Swap<i class="fas fa-arrow-right"></i>
+                      </button>
+                      <div class="col-lg-3 col-xs-12" id="output">
                           <textarea id="custom_encoding_output" class="form-control" readonly></textarea>
+                          <button type="button" class="btn btn-primary full-width" name="button" id="copy_encoding">Copy <i class="fas fa-copy"></i></button>
                       </div>
                   </div>
                 </div>
