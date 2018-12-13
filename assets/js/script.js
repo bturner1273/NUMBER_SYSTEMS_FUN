@@ -13,13 +13,13 @@ $(function(){
         var output_text_area = $("#output_text_area");
         if($("#input_text_area").val().trim().length != 0 && $("#input_text_area").val() != null){
             if(input_format === format.BINARY){
-                if(!BINARY_REGEX.test($("#input_text_area").val().trim())){
+                if(!BINARY_REGEX.test($("#input_text_area").val().replace(/\s/gi,"").trim())){
                     notify.err("You must write valid binary if you choose to use it as your input format (1 and 0 only)");
                     $("#input_text_area").val($("#input_text_area").val().slice(0, $("#input_text_area").val().length-1));
                 }
             }
             if(input_format === format.HEXADECIMAL){
-                if(!HEXADECIMAL_REGEX.test($("#input_text_area").val().trim())){
+                if(!HEXADECIMAL_REGEX.test($("#input_text_area").val().replace(/\s/gi,"").trim())){
                     notify.err("You must write valid hex if you choose to use it as your input format (0-9, a-f, and A-F only)");
                     $("#input_text_area").val($("#input_text_area").val().slice(0, $("#input_text_area").val().length-1));
                 }
@@ -28,10 +28,10 @@ $(function(){
                 output_text_area.val($("#input_text_area").val());
             }
             if(input_format === format.BINARY && output_format === format.HEXADECIMAL){
-                output_text_area.val(parseInt(Number($("#input_text_area").val()), 2).toString(16).toUpperCase());
+                output_text_area.val(parseInt(Number($("#input_text_area").val().replace(/\s/gi,"")), 2).toString(16).toUpperCase());
             }
             if(input_format === format.HEXADECIMAL && output_format === format.BINARY){
-                output_text_area.val(parseInt($("#input_text_area").val(), 16).toString(2));
+                output_text_area.val(parseInt($("#input_text_area").val().replace(/\s/gi,""), 16).toString(2));
             }
             if(input_format === format.ASCII && output_format === format.BINARY){
                 output_text_area.val(ascii_to_base(2));
@@ -51,7 +51,7 @@ $(function(){
     });
 
     function base2_to_ascii(){
-        var list = $("#input_text_area").val().trim().match(/.{1,8}/g);
+        var list = $("#input_text_area").val().replace(/\s/gi,"").trim().match(/.{1,8}/g);
         if(list != null){
             var toReturn = "";
             for(var i = 0; i < list.length; i++){
@@ -63,7 +63,7 @@ $(function(){
     }
 
     function base16_to_ascii(){
-        var list = $("#input_text_area").val().trim().match(/.{1,2}/g);
+        var list = $("#input_text_area").val().replace(/\s/gi,"").trim().match(/.{1,2}/g);
         if(list != null){
             var toReturn = "";
             for(var i = 0; i < list.length; i++){
@@ -80,7 +80,14 @@ $(function(){
         if(input_val != null){
             var toReturn = "";
             for(var i = 0; i < input_val.length; i++){
-                toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
+                if(base == 2){
+                    if(input_val[i].charCodeAt(0).toString(base).length < 8){
+                        toReturn += "0".repeat(8 - input_val[i].charCodeAt(0).toString(base).length)+input_val[i].charCodeAt(0).toString(base) + " ";
+                    }else{
+                        toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
+                    }
+                }else toReturn += input_val[i].charCodeAt(0).toString(base) + " ";
+
             }
             return toReturn;
         }
@@ -175,7 +182,7 @@ $(function(){
                 editor.setValue(editor.getValue().slice(0,editor.getValue().length-1));
             }else{
                 var regex = getRegex();
-                var keyList = editor.getValue().trim().match(regex);
+                var keyList = editor.getValue().replace(/\s/gi,"").trim().match(regex);
                 var strResult = "";
                 if(keyList){
                     for(var i = 0; i < keyList.length; i++){
@@ -183,13 +190,13 @@ $(function(){
                             strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]] + " ";
                         }
                     }
-                    strResult = strResult.replace(/undefined/g, "?");
+                    strResult = strResult.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
                     $("#custom_encoding_output").text(strResult);
                 }else $("#custom_encoding_output").text("");
             }
         }
         if(custom_encoding_format === indices.VALUE_TO_KEY){
-            var valueList = editor.getValue().trim().match(/.{1,1}/g);
+            var valueList = editor.getValue().replace(/\s/gi,"").trim().match(/.{1,1}/g);
             var result = "";
             if(valueList){
                 for(var j = 0; j < valueList.length; j++){
@@ -197,7 +204,7 @@ $(function(){
                         result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]] + " ";
                     }
                 }
-                result = result.replace(/undefined/g, "?");
+                result = result.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
                 $("#custom_encoding_output").text(result);
             }else $("#custom_encoding_output").text("");
         }
@@ -253,13 +260,17 @@ $(function(){
             handleKeyboard: function(data,hash,keyString,keyCode,event){
                 if(editor.getReadOnly()){
                     var input = String.fromCharCode(keyCode);
-                    if(input != "" && input != null){
+                    if(input.replace(/\s/gi,"") != "" && input != null){
                         notify.err("You must have keys and values set before entering text to the encoding area");
                     }
                 }
                 if(keyCode == 8){
                     var output = $("#custom_encoding_output");
-                    output.text(output.text().slice(0,output.text().length-2));
+                    if(custom_encoding_format == indices.KEY_TO_VALUE){ //only subtract from string length - 2* custom encoding bit length if it is value to key
+                        output.text(output.text().slice(0,output.text().length - 2));
+                    }else{
+                        output.text(output.text().slice(0,output.text().length-((2*custom_encoding_num_bits)-1)));
+                    }
                 }
             }
         };
@@ -270,7 +281,7 @@ $(function(){
 
     custom_bits_input.bind("input", function(){
         if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
-            notify.err("You must write valid binary digits (1 and 0 only)")
+            notify.err("You must write valid binary digits (1 and 0 only)");
             custom_bits_input.val("");
         }
         custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
@@ -341,5 +352,6 @@ $(function(){
         err: err
     };
     }());
+    // END NOTY FUNCTIONALITY
 
 });
