@@ -202,7 +202,7 @@ $(function(){
             }
         }
         if(custom_encoding_format === indices.VALUE_TO_KEY){
-            var valueList = editor.getValue().replace(/\s/gi,"").trim().match(/.{1,1}/g);
+            var valueList = editor.getValue().match(/.{1,1}/g);
             var result = "";
             if(valueList){
                 for(var j = 0; j < valueList.length; j++){
@@ -318,7 +318,7 @@ $(function(){
         if(custom_bits_input.val().trim().length == custom_encoding_num_bits){
             var invalid_encoding = false;
             $("#encodings_table tr").each(function(){
-                if($(this).find(".encoding").text().trim().charAt(0) == custom_bits_input.val().charAt(0)){
+                if($(this).find(".encoding").text() == custom_bits_input.val()){
                     notify.err("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
                     invalid_encoding = true;
                 }
@@ -332,7 +332,7 @@ $(function(){
             encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + val + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
             bindLastTRButton();
             encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
-            encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
+            encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
             editor.setReadOnly(false);
         }else{
             notify.err("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
