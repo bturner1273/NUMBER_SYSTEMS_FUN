@@ -14,9 +14,9 @@
                   <h5 class="card-header">Input Box</h5>
                   <div class="card-body">
                     <h5 class="card-title">Input Format</h5>
-                      <label><input type="radio" name="input-format" value="0" checked>ASCII</label>
-                      <label><input type="radio" name="input-format" value="1">BINARY</label>
-                      <label><input type="radio" name="input-format" value="2">HEXADECIMAL</label>
+                      <label><input type="radio" name="input-format" value="ASCII" checked>ASCII</label>
+                      <label><input type="radio" name="input-format" value="BINARY">BINARY</label>
+                      <label><input type="radio" name="input-format" value="HEXADECIMAL">HEXADECIMAL</label>
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                         <span class="input-group-text input_format_foolproof" id="inputGroup-sizing-default">ASCII</span>
@@ -31,9 +31,9 @@
                   <h5 class="card-header">Output Box</h5>
                   <div class="card-body">
                     <h5 class="card-title">Output Format</h5>
-                    <label><input type="radio" name="output-format" value="0">ASCII</label>
-                    <label><input type="radio" name="output-format" value="1" checked>BINARY</label>
-                    <label><input type="radio" name="output-format" value="2">HEXADECIMAL</label>
+                    <label><input type="radio" name="output-format" value="ASCII">ASCII</label>
+                    <label><input type="radio" name="output-format" value="BINARY" checked>BINARY</label>
+                    <label><input type="radio" name="output-format" value="HEXADECIMAL">HEXADECIMAL</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text output_format_foolproof">BINARY</span>
@@ -43,10 +43,11 @@
                   </div>
                 </div>
             </div>
-            <div class="col-lg-12 col-xs-12">
+            <div name="custom_encoding_box" class="col-lg-12 col-xs-12">
                 <div class="card">
                   <h5 class="card-header">Custom Encoding</h5>
                   <div class="card-body row">
+                      <div class="col-lg-4"></div>
                       <div class="col-lg-4 col-xs-12">
                           <strong>Bits in Encoding: </strong><span id="custom_encoding_num_bits">1</span>
                           <div class="slidecontainer">
@@ -77,14 +78,17 @@
                               </tr>
                           </table>
                           <h5 class="card-title">Format:</h5>
-                          <label><input id="keyToValRadio" type="radio" name="custom_encoding_output-format" value="0" checked>Key -> Value</label>
-                          <label><input id="valToKeyRadio" type="radio" name="custom_encoding_output-format" value="1">Value -> Key</label>
+                          <label><input id="keyToValRadio" type="radio" name="custom_encoding_output-format" value="0" checked disabled>Key -> Value</label>
+                          <label><input id="valToKeyRadio" type="radio" name="custom_encoding_output-format" value="1" disabled>Value -> Key</label>
                       </div>
-                      <div class="col-lg-4 col-xs-12" id="editor"></div>
-                      <button id="swap_encoding" type="button" class=" col-lg-.5 col-xs-12 btn btn-sm btn-primary" name="button" style="height:50px; margin-top:10%; margin-left:15px;">
-                          <i class="fas fa-arrow-left"></i>Swap<i class="fas fa-arrow-right"></i>
-                      </button>
-                      <div class="col-lg-3 col-xs-12" id="output">
+                      <div class="col-lg-4"></div>
+                      <div class="col-lg-5 col-xs-12" id="editor"></div>
+                      <div class="text-center col-lg-2 col-xs-12">
+                          <button id="swap_encoding" class="btn btn-primary" name="button" style="">
+                              <i class="fas fa-arrow-left"></i>Swap<i class="fas fa-arrow-right"></i>
+                          </button>
+                      </div>
+                      <div class="col-lg-5 col-xs-12" id="output">
                           <textarea id="custom_encoding_output" class="form-control" readonly></textarea>
                           <button type="button" class="btn btn-primary full-width" name="button" id="copy_encoding">Copy <i class="fas fa-copy"></i></button>
                       </div>
@@ -98,5 +102,8 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"></script>
         <script type="text/javascript" src="assets/js/script.js"></script>
+        <script type="text/javascript">
+            CODEC.init();
+        </script>
     </body>
 </html>
