@@ -181,7 +181,6 @@ $(function(){
     });
 
     function updateEncodingOutputText(){
-        console.log(custom_encoding_format)
         if(custom_encoding_format === indices.KEY_TO_VALUE){
             if(editor.getValue() !== null && editor.getValue() !== "")
             if(!BINARY_REGEX.test(editor.getValue().replace(/\s/gi, ""))){
@@ -194,7 +193,7 @@ $(function(){
                 if(keyList){
                     for(var i = 0; i < keyList.length; i++){
                         if(encodings[custom_encoding_num_bits]){
-                            strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]] + " ";
+                            strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]];
                         }
                     }
                     strResult = strResult.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
@@ -208,7 +207,7 @@ $(function(){
             if(valueList){
                 for(var j = 0; j < valueList.length; j++){
                     if(encodings[custom_encoding_num_bits]){
-                        result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]] + " ";
+                        result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]];
                     }
                 }
                 result = result.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
@@ -319,7 +318,7 @@ $(function(){
         if(custom_bits_input.val().trim().length == custom_encoding_num_bits){
             var invalid_encoding = false;
             $("#encodings_table tr").each(function(){
-                if($(this).find(".encoding").text() == custom_bits_input.val().trim()){
+                if($(this).find(".encoding").text().trim().charAt(0) == custom_bits_input.val().charAt(0)){
                     notify.err("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
                     invalid_encoding = true;
                 }
@@ -329,7 +328,8 @@ $(function(){
                 custom_values_input.val("");
                 return;
             }
-            encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + custom_values_input.val().charAt(0) + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+            var val = custom_values_input.val().charAt(0) == " " ? "\" \"" : custom_values_input.val().charAt(0);
+            encodings_table.append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td class='value'>" + val + "</td><td><button class='deleteKeyValuePair btn btn-warning'><i class='fas fa-times'></i></button></td></tr>");
             bindLastTRButton();
             encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().trim()] = custom_bits_input.val().trim();
@@ -366,25 +366,25 @@ $(function(){
 
     // NOTY FUNCTIONALITY
     var notify = (function () {
-    var suc, err;
-    suc = function (txt, timeout, manualclose) {
-        var n = noty({text: "<b>" + txt + "</b>", type: "success", layout: "topCenter"});
-        if (!manualclose) {
-            setTimeout(function () {n.close(); }, timeout === undefined ? 2000 : timeout);
-        }
-    };
+        var suc, err;
+        suc = function (txt, timeout, manualclose) {
+            var n = noty({text: "<b>" + txt + "</b>", type: "success", layout: "topCenter"});
+            if (!manualclose) {
+                setTimeout(function () {n.close(); }, timeout === undefined ? 2000 : timeout);
+            }
+        };
 
-    err = function (txt, timeout, manualclose) {
-        var n = noty({text: "<b>" + txt + "</b>", type: "error", layout: "topCenter"});
-        if (!manualclose) {
-            setTimeout(function () {n.close(); }, timeout === undefined ? 3000 : timeout);
-        }
-    };
+        err = function (txt, timeout, manualclose) {
+            var n = noty({text: "<b>" + txt + "</b>", type: "error", layout: "topCenter"});
+            if (!manualclose) {
+                setTimeout(function () {n.close(); }, timeout === undefined ? 3000 : timeout);
+            }
+        };
 
-    return {
-        suc: suc,
-        err: err
-    };
+        return {
+            suc: suc,
+            err: err
+        };
     }());
     // END NOTY FUNCTIONALITY
 
