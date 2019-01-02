@@ -1,5 +1,12 @@
 TODO:
+//NEW TODOS
+    get rid of the outlines in the button holder divs
+    make bottom button holder color the same as the readonly textareas
+    change button backgrounds from bootstrap primary to gray
 
+
+
+//OLD TODOS
     change ascii on webpage to text in radios
     use min height in css to make cards taller and make textareas always grow (make both cards equal height at the top)
     add question mark tool tips to input, output, and custom encoding box

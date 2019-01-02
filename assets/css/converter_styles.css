@@ -6,12 +6,20 @@ html{
 body{
     height: 100%;
     width: 100%;
+    background-image: url("images/background.png");
+    background-repeat: no-repeat;
+}
+
+#page_title{
+    margin-top: 50px;
+    position: relative;
+    left: 100px;
 }
 
 #output_button_row div button, #input_button_row div button {
     border-radius: 0px;
     color: gray;
-    background: transparent;
+    background: white;
 }
 
  #output_button_row div button:hover, #input_button_row div button:hover{
@@ -23,7 +31,7 @@ body{
     outline: none;
     box-shadow: none;
     color: rgb(17, 148, 213);
-    background: transparent;
+    background: white;
     border-bottom: 2px solid rgb(17, 148, 213);
 }
 
@@ -31,11 +39,12 @@ body{
     outline: none;
     box-shadow: none;
     color: rgb(17, 148, 213);
-    background: transparent;
+    background: white;
     border-bottom: 2px solid rgb(17, 148, 213);
 }
 
 .button-holder {
+    background: white;
     padding: 10px;
 }
 
@@ -45,6 +54,18 @@ body{
 
 .container{
     padding-top: 15px;
+}
+
+.margin-top-lg{
+    margin-top: 100px;
+}
+
+.margin-top-sm{
+    margin-top: 50px;
+}
+
+.links a{
+    display: block;
 }
 
 textarea {
