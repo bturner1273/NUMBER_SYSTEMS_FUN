@@ -1,3 +1,74 @@
-#input_format_toolbar{
-    
+html{
+    height: 100%;
+    width: 100%;
+}
+
+body{
+    height: 100%;
+    width: 100%;
+}
+
+.row div button{
+    border-radius: 0px;
+    color: gray;
+    background: transparent;
+}
+
+.row div button:hover{
+    background: lightgray;
+}
+
+/* THIS WILL BE DONE IN JS JUST LIKE ON THE ORIGINAL PAGE THIS IS JUST FOR TESTING */
+.row div button:focus{
+    outline: none;
+    box-shadow: none;
+    color: rgb(17, 148, 213);
+    background: transparent;
+    border-bottom: 2px solid rgb(17, 148, 213);
+}
+
+.button-clicked {
+    outline: none;
+    box-shadow: none;
+    color: rgb(17, 148, 213);
+    background: transparent;
+    border-bottom: 2px solid rgb(17, 148, 213);
+}
+
+.container{
+    padding-top: 15px;
+}
+
+textarea {
+    resize: none;
+}
+
+.no-top-radius{
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+.no-bottom-radius {
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+#input_button_row {
+    border-top: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#output_button_row {
+    border-bottom: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#input_text_area {
+    border-top: 1px solid gray;
 }

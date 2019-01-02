@@ -8,16 +8,56 @@
         <link rel="stylesheet" href="assets/css/converter_styles.css">
     </head>
     <body>
+        <!--OVERALL APP WRAPPER CONTAINER-->
         <div class="container">
-            <div class="text-center">
-                <span id="input_format_toolbar">
-                    <button class="btn btn-primary"></button>
-                    <button class="btn btn-primary"></button>
-                    <button class="btn btn-primary"></button>
-                    <button class="btn btn-primary"></button>
-                </span>
-                <textarea class="form-control"></textarea>
+
+            <!-- INPUT DIV -->
+            <div id="input_div" class="">
+                <div id="input_button_row" class="row no-gutters">
+                    <div class="col-2"></div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Text</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Binary</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Hex</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Custom</button>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+                <div class="row no-gutters">
+                    <textarea rows="5" class="form-control no-top-radius no-bottom-radius"></textarea>
+                </div>
             </div>
+
+
+            <div id="output_div" class="">
+                <div class="row no-gutters">
+                    <textarea rows="5" class="form-control no-top-radius no-bottom-radius"></textarea>
+                </div>
+                <div id="output_button_row" class="row no-gutters">
+                    <div class="col-2"></div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Text</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Binary</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Hex</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-block">Custom</button>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+
+
         </div>
 
 
