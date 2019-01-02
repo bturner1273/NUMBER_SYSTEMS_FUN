@@ -15,7 +15,7 @@ body{
 }
 
  #output_button_row div button:hover, #input_button_row div button:hover{
-    background: lightgray;
+    background: #D3D3D3;
 }
 
 /* THIS WILL BE DONE IN JS JUST LIKE ON THE ORIGINAL PAGE THIS IS JUST FOR TESTING */
@@ -53,17 +53,13 @@ textarea {
 
 textarea:focus, textarea:active{
     outline: none;
-    border-color: lightgray !important;
+    border-color: #D3D3D3 !important;
     -webkit-appearence: none;
     -webkit-box-shadow: none !important;
 }
 
-.no-border-top{
-    border-top: 0px;
-}
-
 .border-left{
-    border-left: 1px solid lightgray;
+    border-left: 1px solid #D3D3D3;
 }
 
 .no-top-radius{
@@ -77,37 +73,35 @@ textarea:focus, textarea:active{
 }
 
 #input_button_row {
-    border-top: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    border-left: 1px solid lightgray;
+    border-top: 1px solid #D3D3D3;
+    border-right: 1px solid #D3D3D3;
+    border-left: 1px solid #D3D3D3;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 
 .border-top {
-    border-top: 1px solid lightgray;
+    border-top: 1px solid #D3D3D3;
 }
 
 .border-right {
-    border-right: 1px solid lightgray;
+    border-right: 1px solid #D3D3D3;
 }
 
 .border-bottom{
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid #D3D3D3;
 }
 
-
-
 #input_text_area {
-    border-left: 1px solid lightgray;
+    border-left: 1px solid #D3D3D3;
     border-bottom: none;
-    border-top: 1px solid lightgray;
+    border-top: 1px solid #D3D3D3;
 }
 
 #output_button_row {
-    border-bottom: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    border-left: 1px solid lightgray;
+    border-bottom: 1px solid #D3D3D3;
+    border-right: 1px solid #D3D3D3;
+    border-left: 1px solid #D3D3D3;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
