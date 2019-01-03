@@ -12,8 +12,7 @@ body{
 
 #page_title{
     margin-top: 50px;
-    position: relative;
-    left: 100px;
+    padding-left: 100px;
 }
 
 .border-gray{
@@ -49,7 +48,7 @@ body{
     box-shadow: none;
     color: rgb(17, 148, 213) !important;
     background: white;
-    border-top: 2px solid rgb(17, 148, 213);
+    border-top: 1px solid rgb(17, 148, 213);
 }
 
 .button-holder {
@@ -124,6 +123,12 @@ textarea:focus, textarea:active{
 
 .border-bottom{
     border-bottom: 1px solid #D3D3D3;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+    max-height: 200px;
+    overflow-y: scroll;
 }
 
 #input_text_area {

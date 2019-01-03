@@ -118,6 +118,8 @@ var CODEC = function(){
                 var this_button = $(this);
                 this_button.click(function(){
                     if(this_button.attr('data-format') === "CUSTOM"){
+                        $("#input_div").addClass("border-bottom");
+                        $("#custom_encodings_div").slideDown();
                         $("button").each(function(){
                             $(this).removeClass("input-button-active");
                             $(this).removeClass("output-button-active");
@@ -128,8 +130,21 @@ var CODEC = function(){
                             }else{
                                 $(this).addClass("output-button-active");
                             }
+                            input_format = FORMAT.CUSTOM;
+                            output_format = FORMAT.CUSTOM;
                         });
+                        if(input){
+                            input_format = FORMAT[$(this).attr("data-format")];
+                            input_text_area.val("");
+                            output_text_area.val("");
+                        }else {
+                            output_format = FORMAT[$(this).attr("data-format")];
+                            output_text_area.val("");
+                            input_text_area.trigger("input");
+                        }
                         return;
+                    }else  {
+                       $("#custom_encodings_div").slideUp();
                     }
                     button_list.each(function(){
                         if($(this).attr("data-format") !== this_button.attr("data-format")){
@@ -153,6 +168,7 @@ var CODEC = function(){
         button_toggler(input_buttons, "input-button-active", true);
         button_toggler(output_buttons, "output-button-active", false);
         // END INPUT/OUTPUT FORMAT TOGGLE CODE
+
 
         // INPUT TEXT AREA BINDING
         input_text_area.bind("input", function(){
@@ -179,6 +195,9 @@ var CODEC = function(){
             var result = "";
             if(input_format === output_format){
                 result = input_text_area.val();
+            }
+            if(input_format !== FORMAT.CUSTOM && output_format === FORMAT.CUSTOM){
+                notify.err("Cannot convert from TEXT, BINARY, or HEX to CUSTOM");
             }
             if(input_format === FORMAT.BINARY && output_format === FORMAT.HEXADECIMAL){
                 result = parseInt(Number(input_text_area.val().replace(SPACES_REGEX,"")), 2).toString(16).toUpperCase();
