@@ -16,6 +16,10 @@ body{
     left: 100px;
 }
 
+.border-gray{
+    border: 1px solid lightgray;
+}
+
 #output_button_row div button, #input_button_row div button {
     border-radius: 0px;
     color: gray;
@@ -26,21 +30,26 @@ body{
     background: #D3D3D3;
 }
 
-/* THIS WILL BE DONE IN JS JUST LIKE ON THE ORIGINAL PAGE THIS IS JUST FOR TESTING */
- #output_button_row div button:focus, #input_button_row div button:focus{
+#input_button_row div button:focus, #output_button_row div button:focus{
     outline: none;
     box-shadow: none;
-    color: rgb(17, 148, 213);
-    background: white;
-    border-bottom: 2px solid rgb(17, 148, 213);
 }
 
-.button-clicked {
+.input-button-active {
     outline: none;
     box-shadow: none;
-    color: rgb(17, 148, 213);
+    color: rgb(17, 148, 213) !important;
     background: white;
-    border-bottom: 2px solid rgb(17, 148, 213);
+    border-bottom: 3px solid rgb(17, 148, 213);
+    margin-bottom: -2px;
+}
+
+.output-button-active {
+    outline: none;
+    box-shadow: none;
+    color: rgb(17, 148, 213) !important;
+    background: white;
+    border-top: 2px solid rgb(17, 148, 213);
 }
 
 .button-holder {
@@ -70,6 +79,10 @@ body{
 
 textarea {
     resize: none;
+}
+
+.bg-gray{
+    background: #e9ecef;
 }
 
 textarea:focus, textarea:active{
