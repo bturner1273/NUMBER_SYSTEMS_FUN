@@ -13,6 +13,9 @@
         <div class="container margin-top-sm">
             <!-- INPUT DIV -->
             <div id="input_div" class="">
+                <div class="row no-gutters">
+
+                </div>
                 <div id="input_button_row" class="row no-gutters">
                     <div class="col-2 bg-white"></div>
                     <div class="col-2">
@@ -25,7 +28,7 @@
                         <button class="btn btn-block" data-format="HEXADECIMAL">Hex</button>
                     </div>
                     <div class="col-2">
-                        <button class="btn btn-block" data-format="CUSTOM">Custom</button>
+                        <button class="btn btn-block border-left" data-format="CUSTOM">Custom</button>
                     </div>
                     <div class="col-2 bg-white"></div>
                 </div>
@@ -48,12 +51,12 @@
             <!--CUSTOM ENCODINGS LAYOUT-->
             <div id="custom_encodings_div" class="row no-gutters" style="display: none;">
                 <div class="col-2 border-right"></div>
-                <div id="encodings_table_wrapper" class="col-6 table-wrapper-scroll-y" style="display: none;">
-                    <table id="encodings_table" class="table table-striped table-sm">
+                <div class="encodings_table_wrapper col-6 table-wrapper-scroll-y" style="display: none;">
+                    <table class="encodings_table table table-striped table-sm">
 
                     </table>
                 </div>
-                <div id="no_encodings_to_display" class="col-6 my-auto text-center" style="color: gray;">
+                <div class="no_encodings_to_display col-6 my-auto text-center" style="color: gray;">
                     No Content
                 </div>
                 <div class="col-3 text-center button-holder border-right">
@@ -66,16 +69,43 @@
 
 
             <div id="edit_encodings_table_modal" class="modal fade" tabindex="-1" role="dialog">
-              <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title">Custom Encoding</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
                   </div>
-                  <div class="modal-body">
-                    <p>Modal body text goes here.</p>
+                  <div class="modal-body row">
+                      <div class="col-lg-6 col-xs-12">
+                          <strong>Bits in Encoding: </strong><span id="custom_encoding_num_bits">1</span>
+                          <div class="slidecontainer">
+                              <input id="bit_range" class="slider" type="range" min="1" max="8" value="1" name="" value="">
+                          </div>
+                          <table class="col-lg-12 col-xs-12">
+                              <tr>
+                                  <td>
+                                      <input id="custom_bits_input" type="text" class="form-control" name="" value="" placeholder="1 BIT(s)">
+                                  </td>
+                                  <td rowspan="2">
+                                      <button id="submit_encoding" type="button" name="button" class="btn btn-primary float-right"><i class="fas fa-plus"></i></button>
+                                  </td>
+                              </tr>
+                              <tr>
+                                 <td>
+                                     <input id="custom_values_input" type="text" class="form-control" name="" value="" placeholder="VALUE">
+                                 </td>
+                              </tr>
+                          </table>
+                      </div>
+                      <div class="col-lg-6 col-xs-12">
+                          <div class="encodings_table_wrapper col-12 table-wrapper-scroll-y" style="display: none;">
+                              <table class="encodings_table table table-striped table-sm">
+
+                              </table>
+                          </div>
+                          <div class="no_encodings_to_display col-12 my-auto text-center" style="color: gray;">
+                              No Content
+                          </div>
+                      </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-primary">Save changes</button>
@@ -109,7 +139,7 @@
                         <button class="btn btn-block" data-format="HEXADECIMAL">Hex</button>
                     </div>
                     <div class="col-2">
-                        <button class="btn btn-block" data-format="CUSTOM">Custom</button>
+                        <button class="btn btn-block border-left" data-format="CUSTOM">Custom</button>
                     </div>
                     <div class="col-2 bg-white"></div>
                 </div>

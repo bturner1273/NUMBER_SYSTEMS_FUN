@@ -133,6 +133,11 @@ var CODEC = function(){
                             input_format = FORMAT.CUSTOM;
                             output_format = FORMAT.CUSTOM;
                         });
+                        $("#output_button_row").find("button").each(function(){
+                            if($(this).attr("data-format") !== "CUSTOM"){
+                                $(this).attr("disabled", true);
+                            }
+                        });
                         if(input){
                             input_format = FORMAT[$(this).attr("data-format")];
                             input_text_area.val("");
@@ -144,7 +149,19 @@ var CODEC = function(){
                         }
                         return;
                     }else  {
-                       $("#custom_encodings_div").slideUp();
+                        if($('#custom_encodings_div').is(":visible")){
+                            $("#custom_encodings_div").slideUp();
+                            var output_button_list = $("#output_button_row").find("button");
+                            output_button_list.each(function(index){
+                                $(this).attr("disabled", false);
+                                if(index === 0){
+                                    $(this).addClass("output-button-active");
+                                    output_format = FORMAT.ASCII;
+                                }else if(index === output_button_list.length - 1){
+                                    $(this).removeClass("output-button-active");
+                                }
+                            });
+                        }
                     }
                     button_list.each(function(){
                         if($(this).attr("data-format") !== this_button.attr("data-format")){
@@ -169,53 +186,75 @@ var CODEC = function(){
         button_toggler(output_buttons, "output-button-active", false);
         // END INPUT/OUTPUT FORMAT TOGGLE CODE
 
+        //NUM BITS INPUT ERROR CHECKING
+        var custom_bits_input = $("#custom_bits_input");
+        custom_bits_input.bind("input", function(){
+            if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
+                notify.err("You must write valid binary digits (1 and 0 only)");
+                custom_bits_input.val("");
+            }
+            custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
+            if(custom_bits_input.val().length > custom_encoding_num_bits && custom_bits_input.val().length != 0){
+                notify.err("Your encoding cannot be larger than the bit length you set");
+                custom_bits_input.val(custom_bits_input.val().slice(0, custom_encoding_num_bits));
+            }
+        });
+        //END NUM BITS INPUT ERROR CHECKING
+
+        var bindLastTRButton = function() {
+            $("#encodings_table button").last().click(function(){
+                delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+                delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
+                $(this).closest("tr").remove();
+                if ($("#encodings_table tr").length < 2) {
+                    editor.setReadOnly(true);
+                }
+            });
+        };
 
         // INPUT TEXT AREA BINDING
         input_text_area.bind("input", function(){
             var inp_val = input_text_area.val();
             // TODO double check logic here
-            if(!(input_text_area.val().trim().length != 0 && input_text_area.val() != null)){
+            if(!(inp_val.trim().length != 0 && inp_val != null)){
                 output_text_area.val("");
                 return;
             }
 
             if(input_format === FORMAT.BINARY){
-                if(!BINARY_REGEX.test(input_text_area.val().replace(SPACES_REGEX,"").trim())){
+                if(!BINARY_REGEX.test(inp_val.replace(SPACES_REGEX,"").trim())){
                     notify.err("You must write valid binary if you choose to use it as your input format (1 and 0 only)");
-                    input_text_area.val(input_text_area.val().slice(0, input_text_area.val().length-1));
+                    input_text_area.val(inp_val.slice(0, inp_val.length-1));
                 }
             }
             if(input_format === FORMAT.HEXADECIMAL){
-                if(!HEXADECIMAL_REGEX.test(input_text_area.val().replace(SPACES_REGEX,"").trim())){
+                if(!HEXADECIMAL_REGEX.test(inp_val.replace(SPACES_REGEX,"").trim())){
                     notify.err("You must write valid hex if you choose to use it as your input format (0-9, a-f, and A-F only)");
-                    input_text_area.val(input_text_area.val().slice(0, input_text_area.val().length-1));
+                    input_text_area.val(inp_val.slice(0, inp_val.length-1));
                 }
             }
 
             var result = "";
             if(input_format === output_format){
-                result = input_text_area.val();
-            }
-            if(input_format !== FORMAT.CUSTOM && output_format === FORMAT.CUSTOM){
-                notify.err("Cannot convert from TEXT, BINARY, or HEX to CUSTOM");
+                result = inp_val;
             }
             if(input_format === FORMAT.BINARY && output_format === FORMAT.HEXADECIMAL){
-                result = parseInt(Number(input_text_area.val().replace(SPACES_REGEX,"")), 2).toString(16).toUpperCase();
+                result = parseInt(Number(inp_val.replace(SPACES_REGEX,"")), 2).toString(16).toUpperCase();
             }
             if(input_format === FORMAT.HEXADECIMAL && output_format === FORMAT.BINARY){
-                result = parseInt(input_text_area.val().replace(SPACES_REGEX,""), 16).toString(2);
+                result = parseInt(inp_val.replace(SPACES_REGEX,""), 16).toString(2);
             }
             if(input_format === FORMAT.ASCII && output_format === FORMAT.BINARY){
-                result = ascii_to_base(input_text_area.val(), 2);
+                result = ascii_to_base(inp_val, 2);
             }
             if(input_format === FORMAT.ASCII && output_format === FORMAT.HEXADECIMAL){
-                result = ascii_to_base(input_text_area.val(), 16);
+                result = ascii_to_base(inp_val, 16);
             }
             if(input_format === FORMAT.BINARY && output_format === FORMAT.ASCII){
-                result = base2_to_ascii(input_text_area.val());
+                result = base2_to_ascii(inp_val);
             }
             if(input_format === FORMAT.HEXADECIMAL && output_format === FORMAT.ASCII){
-                result = base16_to_ascii(input_text_area.val());
+                result = base16_to_ascii(inp_val);
             }
             output_text_area.val(result);
         });
