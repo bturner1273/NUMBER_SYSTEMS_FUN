@@ -218,7 +218,7 @@ var CODEC = function(){
         var custom_values_input = $("#custom_values_input");
         var encodings_table = $(".encodings_table");
 
-        $("#bit_range").slider().on('change', function(){
+        $("#bit_range").slider().on('input', function(){
             $("#custom_encoding_num_bits").text(this.value);
             custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
             $("#custom_bits_input").attr("placeholder", this.value + " BIT(s)");
@@ -287,7 +287,7 @@ var CODEC = function(){
                         output_text_area.val(strResult);
                         return strResult;
                     } else {
-                        output_text_area.val("");
+                        return "";
                     }
                 }
             }
@@ -301,9 +301,9 @@ var CODEC = function(){
                         }
                     }
                     result = result.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
-                    $("#custom_encoding_output").text(result);
+                    return result;
                 } else {
-                    $("#custom_encoding_output").text("");
+                    return "";
                 }
             }
         }
@@ -383,9 +383,23 @@ var CODEC = function(){
             custom_values_input.val("");
         });
 
-// TODO AFTER LUNCH WRITE COPY BUTTON FUNCTIONALITY FOR INPUT AND OUTPUT TEXTAREAS
-// WRITE SHARE FUNCTIONALITY
-// WRITE VAL TO KEY KEY TO VAL SWITCH BUTTON FUNCTIONALITY
+        $("#share_encodings_table").click(function(){
+            // ENCODING EXAMPLE WORKS
+            // var dict = { 
+            //     brad: 1,
+            //     mike: 1,
+            //     jynx: 1
+            // }
+            // var encoded = encodeURIComponent(window.btoa(JSON.stringify(dict)));
+            // var decoded = JSON.parse(window.atob(decodeURIComponent(encoded)));
+            //
+            // console.log("base64 string: " + encoded);
+            // console.log("decoded object: " , decoded);
+
+            var dict_to_encode;
+
+        });
+
         $("#copy_input").click(function(){
             input_text_area.select();
             document.execCommand("copy");
@@ -398,19 +412,43 @@ var CODEC = function(){
             notify.suc(output_text_area.val() + " copied to clipboard!");
         });
 
+        var swap_custom = $("#swap_custom");
+        swap_custom.click(function(){
+            var temp = input_text_area.val();
+            input_text_area.val(output_text_area.val());
+            output_text_area.val(temp);
+            if(custom_encoding_format === indices.KEY_TO_VALUE){
+                custom_encoding_format = indices.VALUE_TO_KEY;
+                swap_custom.text("Value -> Key");
+            }else{
+                custom_encoding_format = indices.KEY_TO_VALUE;
+                swap_custom.text("Key -> Value");
+            }
+        });
 
-        $("#swap_encoding").click(function(){
-            // var encoding_output = $("#custom_encoding_output");
-            // var encoding_input = editor;
-            // if($("#valToKeyRadio").is(':checked')){
-            //     custom_encoding_format = indices.KEY_TO_VALUE;
-            //     $("#keyToValRadio").prop('checked', true);
-            // }else {
-            //     custom_encoding_format = indices.VALUE_TO_KEY;
-            //     $("#valToKeyRadio").prop('checked', true);
-            // }
-            // encoding_input.setValue(encoding_output.val());
-            updateEncodingOutputText();
+        var swap_regular = $("#swap_regular");
+        swap_regular.click(function(){
+            if(input_format === FORMAT.CUSTOM){
+                swap_custom.trigger('click');
+            }else{
+                // save value of text areas before they are cleared on click trigger
+                var input_text = input_text_area.val();
+                var output_text = output_text_area.val();
+
+                // swap input and output format
+                var temp = input_format;
+                input_format = output_format;
+                output_format = temp;
+
+                // trigger button clicks on the correct buttons
+                // so the user can see what they are converting from the UI
+                $($("#input_button_row").children().children().get(input_format)).trigger("click");
+                $($("#output_button_row").children().children().get(output_format)).trigger("click");
+
+                // swap input and output strings in the textareas
+                output_text_area.val(input_text);
+                input_text_area.val(output_text);
+            }
         });
         // END CUSTOM ENCODING LOGIC
 

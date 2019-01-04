@@ -1,6 +1,6 @@
 TODO:
 
--add/edit/remove custom encodings
+-noty alert for when the share button is pressed saying "x" link copied to clipboard
 
 -share custom encodings by encoding the stringified dictionary at that bit length
 and adding it to a sharable url. On load if there are url params then decode them,
