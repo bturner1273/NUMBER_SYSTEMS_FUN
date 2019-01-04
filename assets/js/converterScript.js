@@ -383,6 +383,9 @@ var CODEC = function(){
             custom_values_input.val("");
         });
 
+// TODO AFTER LUNCH WRITE COPY BUTTON FUNCTIONALITY FOR INPUT AND OUTPUT TEXTAREAS
+// WRITE SHARE FUNCTIONALITY
+// WRITE VAL TO KEY KEY TO VAL SWITCH BUTTON FUNCTIONALITY
         $("#copy_encoding").click(function(){
             output_text_area.select();
             document.execCommand("copy");
