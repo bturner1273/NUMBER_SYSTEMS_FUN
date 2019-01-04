@@ -386,11 +386,18 @@ var CODEC = function(){
 // TODO AFTER LUNCH WRITE COPY BUTTON FUNCTIONALITY FOR INPUT AND OUTPUT TEXTAREAS
 // WRITE SHARE FUNCTIONALITY
 // WRITE VAL TO KEY KEY TO VAL SWITCH BUTTON FUNCTIONALITY
-        $("#copy_encoding").click(function(){
-            output_text_area.select();
+        $("#copy_input").click(function(){
+            input_text_area.select();
             document.execCommand("copy");
-            notify.suc(encoding_output.val() + " copied to clipboard!");
+            notify.suc(input_text_area.val() + " copied to clipboard!");
         });
+
+        $("#copy_output").click(function(){
+            output_text_area.select();
+            document.execCommand('copy');
+            notify.suc(output_text_area.val() + " copied to clipboard!");
+        });
+
 
         $("#swap_encoding").click(function(){
             // var encoding_output = $("#custom_encoding_output");
