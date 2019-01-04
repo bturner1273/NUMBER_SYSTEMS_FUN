@@ -201,16 +201,209 @@ var CODEC = function(){
         });
         //END NUM BITS INPUT ERROR CHECKING
 
-        var bindLastTRButton = function() {
-            $("#encodings_table button").last().click(function(){
-                delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
-                delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
-                $(this).closest("tr").remove();
-                if ($("#encodings_table tr").length < 2) {
-                    editor.setReadOnly(true);
-                }
-            });
+        // CUSTOM ENCODING LOGIC
+        var indices = Object.freeze({"KEY_TO_VALUE" : 0, "VALUE_TO_KEY" : 1});
+        var custom_encoding_format = indices.KEY_TO_VALUE;
+        var encodings = {
+            1: [{},{}],
+            2: [{},{}],
+            3: [{},{}],
+            4: [{},{}],
+            5: [{},{}],
+            6: [{},{}],
+            7: [{},{}],
+            8: [{},{}]
         };
+        var custom_encoding_num_bits;
+        var custom_values_input = $("#custom_values_input");
+        var encodings_table = $(".encodings_table");
+
+        $("#bit_range").slider().on('change', function(){
+            $("#custom_encoding_num_bits").text(this.value);
+            custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
+            $("#custom_bits_input").attr("placeholder", this.value + " BIT(s)");
+            loadEncodingTable();
+        });
+
+        function clearEncodingTable(){
+            $(".encodings_table tr").each(function(){
+                $(this).remove();
+            });
+        }
+
+            var bindLastTRButton = function() {
+                $(".encodings_table button").each(function(){
+                        $(this).last().click(function(){
+                        delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+                        delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
+                        var this_button = $(this);
+                        $(".encodings_table button").each(function(){
+                            if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
+                                $(this).closest("tr").remove();
+                            }
+                        });
+                        this_button.closest("tr").remove();
+                    });
+                });
+            };
+
+        function loadEncodingTable(){
+            clearEncodingTable();
+            var dict_to_load = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+            if(Object.keys(dict_to_load).length == 0 || dict_to_load == null){
+                return;
+            }
+            var sorted_keys = [];
+            for(var i in dict_to_load){
+                sorted_keys.push(i);
+            }
+            sorted_keys = sorted_keys.sort();
+            for(var j in sorted_keys){
+                encodings_table.each(function(){
+                    $(this).append("<tr><td>" + sorted_keys[j] +"</td><td><i class='far fa-arrow-right'></i></td><td>" + dict_to_load[sorted_keys[j].trim()] + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+                });
+                bindLastTRButton();
+            }
+        }
+
+        function updateEncodingOutputText(){
+            if(custom_encoding_format === indices.KEY_TO_VALUE){
+                var editorVal = input_text_area.val();
+                if(editorVal !== null && editorVal !== "")
+                if(!BINARY_REGEX.test(editorVal.replace(SPACES_REGEX, ""))){
+                    notify.err("You must enter valid binary digits (1 or 0) when in Key -> Value format");
+                    input_text_area.val(editorVal.slice(0,editorVal.length-1));
+                }else{
+                    var regex = getRegex();
+                    var keyList = editorVal.replace(SPACES_REGEX,"").trim().match(regex);
+                    var strResult = "";
+                    if(keyList){
+                        for(var i = 0; i < keyList.length; i++){
+                            if(encodings[custom_encoding_num_bits]){
+                                strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]];
+                            }
+                        }
+                        strResult = strResult.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
+                        output_text_area.val(strResult);
+                        return strResult;
+                    } else {
+                        output_text_area.val("");
+                    }
+                }
+            }
+            if(custom_encoding_format === indices.VALUE_TO_KEY){
+                var valueList = input_text_area.val().match(/.{1,1}/g);
+                var result = "";
+                if(valueList){
+                    for(var j = 0; j < valueList.length; j++){
+                        if(encodings[custom_encoding_num_bits]){
+                            result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]];
+                        }
+                    }
+                    result = result.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
+                    $("#custom_encoding_output").text(result);
+                } else {
+                    $("#custom_encoding_output").text("");
+                }
+            }
+        }
+
+        function getRegex(custom_encoding_num_bitsCHANGEME){
+            var regex;
+            switch(custom_encoding_num_bits){
+                case 1:
+                    regex = /.{1,1}/g;
+                    break;
+                case 2:
+                    regex = /.{1,2}/g;
+                    break;
+                case 3:
+                    regex = /.{1,3}/g;
+                    break;
+                case 4:
+                    regex = /.{1,4}/g;
+                    break;
+                case 5:
+                    regex = /.{1,5}/g;
+                    break;
+                case 6:
+                    regex = /.{1,6}/g;
+                    break;
+                case 7:
+                    regex = /.{1,7}/g;
+                    break;
+                case 8:
+                    regex = /.{1,8}/g;
+                    break;
+            }
+            return regex;
+        }
+
+        custom_bits_input.bind("input", function(){
+            if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
+                notify.err("You must write valid binary digits (1 and 0 only)");
+                custom_bits_input.val("");
+            }
+            custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
+            if(custom_bits_input.val().length > custom_encoding_num_bits && custom_bits_input.val().length != 0){
+                notify.err("Your encoding cannot be larger than the bit length you set");
+                custom_bits_input.val(custom_bits_input.val().slice(0, custom_encoding_num_bits));
+            }
+        });
+
+        $("#submit_encoding").click(function(){
+            if(custom_bits_input.val().trim().length == custom_encoding_num_bits){
+                var invalid_encoding = false;
+                $(".encodings_table tr").each(function(){
+                    if($(this).find(".encoding").text() == custom_bits_input.val()){
+                        notify.err("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
+                        invalid_encoding = true;
+                    }
+                });
+                if(invalid_encoding){
+                    custom_bits_input.val("");
+                    custom_values_input.val("");
+                    return;
+                }
+                var val = custom_values_input.val().charAt(0) == " " ? "[space]" : custom_values_input.val().charAt(0);
+                encodings_table.each(function(){
+                    if(encodings_table.is(":hidden")){
+                        $(".encodings_table_wrapper").show();
+                        $(".no_encodings_to_display").hide();
+                    }
+                    $(this).append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td><i class='far fa-arrow-right'></i></td><td class='value'>" + val + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+                });
+                bindLastTRButton();
+                encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
+                encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
+            }else{
+                notify.err("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
+            }
+            custom_bits_input.val("");
+            custom_values_input.val("");
+        });
+
+        $("#copy_encoding").click(function(){
+            output_text_area.select();
+            document.execCommand("copy");
+            notify.suc(encoding_output.val() + " copied to clipboard!");
+        });
+
+        $("#swap_encoding").click(function(){
+            // var encoding_output = $("#custom_encoding_output");
+            // var encoding_input = editor;
+            // if($("#valToKeyRadio").is(':checked')){
+            //     custom_encoding_format = indices.KEY_TO_VALUE;
+            //     $("#keyToValRadio").prop('checked', true);
+            // }else {
+            //     custom_encoding_format = indices.VALUE_TO_KEY;
+            //     $("#valToKeyRadio").prop('checked', true);
+            // }
+            // encoding_input.setValue(encoding_output.val());
+            updateEncodingOutputText();
+        });
+        // END CUSTOM ENCODING LOGIC
+
 
         // INPUT TEXT AREA BINDING
         input_text_area.bind("input", function(){
@@ -235,8 +428,11 @@ var CODEC = function(){
             }
 
             var result = "";
-            if(input_format === output_format){
+            if(input_format === output_format && input_format !== FORMAT.CUSTOM){
                 result = inp_val;
+            }
+            if(input_format === FORMAT.CUSTOM){
+                result = updateEncodingOutputText();
             }
             if(input_format === FORMAT.BINARY && output_format === FORMAT.HEXADECIMAL){
                 result = parseInt(Number(inp_val.replace(SPACES_REGEX,"")), 2).toString(16).toUpperCase();
