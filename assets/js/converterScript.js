@@ -385,7 +385,7 @@ var CODEC = function(){
 
         $("#share_encodings_table").click(function(){
             // ENCODING EXAMPLE WORKS
-            // var dict = { 
+            // var dict = {
             //     brad: 1,
             //     mike: 1,
             //     jynx: 1
@@ -395,10 +395,33 @@ var CODEC = function(){
             //
             // console.log("base64 string: " + encoded);
             // console.log("decoded object: " , decoded);
-
-            var dict_to_encode;
-
+            if(encodings[custom_encoding_num_bits]){
+                var dict_to_encode = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+                var encoded_dict = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode)));
+                var shareable_link = window.location.href + "/" + encoded_dict;
+                copyStringToClipboard(shareable_link);
+                notify.suc("Shareable link copied to clipboard!");
+            }else{
+                notify.err("Cannot share empty custom encodings");
+            }
         });
+
+        function copyStringToClipboard (str) {
+           // Create new element
+           var el = document.createElement('textarea');
+           // Set value (string to be copied)
+           el.value = str;
+           // Set non-editable to avoid focus and move outside of view
+           el.setAttribute('readonly', '');
+           el.style = {position: 'absolute', left: '-9999px'};
+           document.body.appendChild(el);
+           // Select text inside element
+           el.select();
+           // Copy text to clipboard
+           document.execCommand('copy');
+           // Remove temporary element
+           document.body.removeChild(el);
+        }
 
         $("#copy_input").click(function(){
             input_text_area.select();
