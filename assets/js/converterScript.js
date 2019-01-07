@@ -1,7 +1,7 @@
 var CODEC = function(){
 
     // FUNCTIONS
-    var ascii_to_base, base2_to_ascii, base16_to_ascii, clear_output_textarea, resize_handler, init;
+    var handle_shareable_link, ascii_to_base, base2_to_ascii, base16_to_ascii, clear_output_textarea, resize_handler, init;
 
     // constants
     var FORMAT = {
@@ -14,7 +14,28 @@ var CODEC = function(){
     var BINARY_REGEX = /^[01]+$/;
     var HEXADECIMAL_REGEX = /^[0-9A-Fa-f]*$/;
 
+    // LOAD CODEC TO DISPLAY A SHARED CUSTOM ENCODING IF THE LINK CONTAINS
+    // A SERIALIZED DICTIONARY
+    var getUrlParams = function() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
 
+    handle_shareable_link = function(){
+        // CHECK TO SEE IF THERE ARE ANY QUERY PARAMS
+        // var decoded = JSON.parse(window.atob(decodeURIComponent(encoded)));
+
+        var params = getUrlParams();
+        if(Object.keys(params).length > 0){
+            var load_dict = params["load_dict"];
+            load_dict = JSON.parse(window.atob(decodeURIComponent(load_dict)));
+            console.log(load_dict);
+        }
+    }();
+    // END LOAD CODEC
 
     // MAKE RESIZE PRETTY
     resize_handler = function(){
@@ -231,21 +252,21 @@ var CODEC = function(){
             });
         }
 
-            var bindLastTRButton = function() {
-                $(".encodings_table button").each(function(){
-                        $(this).last().click(function(){
-                        delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
-                        delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
-                        var this_button = $(this);
-                        $(".encodings_table button").each(function(){
-                            if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
-                                $(this).closest("tr").remove();
-                            }
-                        });
-                        this_button.closest("tr").remove();
+        var bindLastTRButton = function() {
+            $(".encodings_table button").each(function(){
+                    $(this).last().click(function(){
+                    delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+                    delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
+                    var this_button = $(this);
+                    $(".encodings_table button").each(function(){
+                        if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
+                            $(this).closest("tr").remove();
+                        }
                     });
+                    this_button.closest("tr").remove();
                 });
-            };
+            });
+        };
 
         function loadEncodingTable(){
             clearEncodingTable();
@@ -398,7 +419,7 @@ var CODEC = function(){
             if(encodings[custom_encoding_num_bits]){
                 var dict_to_encode = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
                 var encoded_dict = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode)));
-                var shareable_link = window.location.href + "/" + encoded_dict;
+                var shareable_link = window.location.href + "?load_dict=" + encoded_dict;
                 copyStringToClipboard(shareable_link);
                 notify.suc("Shareable link copied to clipboard!");
             }else{
