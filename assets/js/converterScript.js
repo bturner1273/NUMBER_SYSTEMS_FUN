@@ -294,6 +294,11 @@ var CODEC = function(){
         });
         //END NUM BITS INPUT ERROR CHECKING
 
+        $("#share_website_button").click(function(){
+            copyStringToClipboard(window.location.href);
+            notify.suc("Site link copied to clipboard!") 
+        })
+
         // CUSTOM ENCODING LOGIC
         var custom_encoding_format = indices.KEY_TO_VALUE;
 
