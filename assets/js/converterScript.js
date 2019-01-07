@@ -1,7 +1,7 @@
 var CODEC = function(){
 
     // FUNCTIONS
-    var handle_shareable_link, ascii_to_base, base2_to_ascii, base16_to_ascii, clear_output_textarea, resize_handler, init;
+    var handle_shareable_link, ascii_to_base, base2_to_ascii, base16_to_ascii, resize_handler, init;
 
     // constants
     var FORMAT = {
@@ -30,7 +30,7 @@ var CODEC = function(){
     var custom_encoding_num_bits;
 
     var encodings_table = $(".encodings_table");
-    function clearEncodingTable(){
+    var clearEncodingTable = function(){
         $(".encodings_table tr").each(function(){
             $(this).remove();
         });
@@ -52,7 +52,7 @@ var CODEC = function(){
         });
     };
 
-    function loadEncodingTable(){
+    var loadEncodingTable = function(){
         clearEncodingTable();
         var dict_to_load = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
         if(Object.keys(dict_to_load).length == 0 || dict_to_load == null){
@@ -71,8 +71,8 @@ var CODEC = function(){
         }
     }
 
-    // LOAD CODEC TO DISPLAY A SHARED CUSTOM ENCODING IF THE LINK CONTAINS
-    // A SERIALIZED DICTIONARY
+
+    // RETURNS URL PARAMETER DICTIONARY
     var getUrlParams = function() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -81,32 +81,31 @@ var CODEC = function(){
         return vars;
     }
 
-
+    // FOR GETTING RID OF THE NO CONTENT SPANS AND INSERTING ENCODINGS TABLE
     var custom_bits_input = $("#custom_bits_input");
     var custom_values_input = $("#custom_values_input");
-    function unhide_encodings_table(){
+    var unhide_encodings_table = function(){
         var val = custom_values_input.val().charAt(0) == " " ? "[space]" : custom_values_input.val().charAt(0);
         encodings_table.each(function(){
             if(encodings_table.is(":hidden")){
                 $(".encodings_table_wrapper").show();
                 $(".no_encodings_to_display").hide();
             }
-            $(this).append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td><i class='far fa-arrow-right'></i></td><td class='value'>" + val + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+            $(this).append("<tr><td class='encoding'>" + custom_bits_input.val()
+             + "</td><td><i class='far fa-arrow-right'></i></td><td class='value'>" + val
+             + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
         });
     }
 
+    // LOAD CODEC TO DISPLAY A SHARED CUSTOM ENCODING IF THE LINK CONTAINS
+    // A SERIALIZED DICTIONARY
     handle_shareable_link = function(){
-        // CHECK TO SEE IF THERE ARE ANY QUERY PARAMS
-        // var decoded = JSON.parse(window.atob(decodeURIComponent(encoded)));
-
         var params = getUrlParams();
         if(Object.keys(params).length > 0){
             unhide_encodings_table();
-            var load_dict_key_val = params["load_dict_key_val"];
-            var load_dict_val_key = params["load_dict_val_key"];
             // custom_encoding_num_bits = params["custom_num_bits"];
-            load_dict_key_val = JSON.parse(window.atob(decodeURIComponent(load_dict_key_val)));
-            load_dict_val_key = JSON.parse(window.atob(decodeURIComponent(load_dict_val_key)));
+            var load_dict_key_val = JSON.parse(window.atob(decodeURIComponent(params["load_dict_key_val"])));
+            var load_dict_val_key = JSON.parse(window.atob(decodeURIComponent(params["load_dict_val_key"])));
             custom_encoding_num_bits = Number(params["custom_num_bits"]);
             $("#custom_encoding_num_bits").text(custom_encoding_num_bits);
             $("#bit_range").val(custom_encoding_num_bits);
@@ -150,16 +149,8 @@ var CODEC = function(){
     }();
     // END MAKE RESIZE PRETTY
 
-    clear_output_textarea = function(){
-        $("#output_text_area").val("");
-    };
-
-    clear_input_textarea = function(){
-        $("#input_text_area").val("");
-    };
-
     ascii_to_base = function (input_val, base) {
-        clear_output_textarea();
+        $("#output_text_area").val("");
         if (input_val != null) {
             var toReturn = "";
             for (var i = 0; i < input_val.length; i++) {
@@ -182,7 +173,6 @@ var CODEC = function(){
         return;
     };
 
-    // text is $("#input_text_area").val()
     base2_to_ascii = function (text) {
         var list = text.replace(SPACES_REGEX,"").trim().match(/.{1,8}/g);
         if(list != null){
@@ -217,6 +207,21 @@ var CODEC = function(){
         // INPUT/OUTPUT FORMAT TOGGLE CODE
         var input_format = FORMAT.ASCII;
         var output_format = FORMAT.BINARY;
+
+        // HANDLES CHANGES IN INPUT/OUTPUT FORMAT
+        var toggle_format = function(button, input){
+            if(input){
+                input_format = FORMAT[button.attr("data-format")];
+                input_text_area.val("");
+                output_text_area.val("");
+            }else {
+                output_format = FORMAT[button.attr("data-format")];
+                output_text_area.val("");
+                input_text_area.trigger("input");
+            }
+        }
+
+        // HANDLES LOOKS CHANGES WHEN INPUT/OUTPUT FORMAT IS CHANGED
         var button_toggler = function(button_list, addRemoveClass, input){
             button_list.each(function(){
                 var this_button = $(this);
@@ -242,15 +247,7 @@ var CODEC = function(){
                                 $(this).attr("disabled", true);
                             }
                         });
-                        if(input){
-                            input_format = FORMAT[$(this).attr("data-format")];
-                            input_text_area.val("");
-                            output_text_area.val("");
-                        }else {
-                            output_format = FORMAT[$(this).attr("data-format")];
-                            output_text_area.val("");
-                            input_text_area.trigger("input");
-                        }
+                        toggle_format($(this), input);
                         return;
                     }else  {
                         if($('#custom_encodings_div').is(":visible")){
@@ -272,20 +269,13 @@ var CODEC = function(){
                             $(this).removeClass(addRemoveClass);
                         }else{
                             $(this).addClass(addRemoveClass);
-                            if(input){
-                                input_format = FORMAT[$(this).attr("data-format")];
-                                input_text_area.val("");
-                                output_text_area.val("");
-                            }else {
-                                output_format = FORMAT[$(this).attr("data-format")];
-                                output_text_area.val("");
-                                input_text_area.trigger("input");
-                            }
+                            toggle_format($(this), input);
                         }
                     });
                 });
             });
         };
+
         button_toggler(input_buttons, "input-button-active", true);
         button_toggler(output_buttons, "output-button-active", false);
         // END INPUT/OUTPUT FORMAT TOGGLE CODE
@@ -314,7 +304,7 @@ var CODEC = function(){
             loadEncodingTable();
         });
 
-        function updateEncodingOutputText(){
+        var updateEncodingOutputText = function(){
             if(custom_encoding_format === indices.KEY_TO_VALUE){
                 var editorVal = input_text_area.val();
                 if(editorVal !== null && editorVal !== "")
@@ -356,7 +346,7 @@ var CODEC = function(){
             }
         }
 
-        function getRegex(){
+        var getRegex = function(){
             var regex;
             switch(custom_encoding_num_bits){
                 case 1:
@@ -425,17 +415,6 @@ var CODEC = function(){
         });
 
         $("#share_encodings_table").click(function(){
-            // ENCODING EXAMPLE WORKS
-            // var dict = {
-            //     brad: 1,
-            //     mike: 1,
-            //     jynx: 1
-            // }
-            // var encoded = encodeURIComponent(window.btoa(JSON.stringify(dict)));
-            // var decoded = JSON.parse(window.atob(decodeURIComponent(encoded)));
-            //
-            // console.log("base64 string: " + encoded);
-            // console.log("decoded object: " , decoded);
             if(encodings[custom_encoding_num_bits]){
                 var dict_to_encode_key_val = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
                 var encoded_dict_key_val = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode_key_val)));
@@ -451,35 +430,34 @@ var CODEC = function(){
             }
         });
 
-        function copyStringToClipboard (str) {
-           // Create new element
+        // TAKES STRING PARAMETER AND COPIES TO USERS CLIPBOARD
+        var copyStringToClipboard = function(str) {
            var el = document.createElement('textarea');
-           // Set value (string to be copied)
            el.value = str;
-           // Set non-editable to avoid focus and move outside of view
            el.setAttribute('readonly', '');
            el.style = {position: 'absolute', left: '-9999px'};
            document.body.appendChild(el);
-           // Select text inside element
            el.select();
-           // Copy text to clipboard
            document.execCommand('copy');
-           // Remove temporary element
            document.body.removeChild(el);
         }
 
+        // COPIES CONTENTS OF INPUT TEXT AREA TO USERS CLIPBOARD
         $("#copy_input").click(function(){
             input_text_area.select();
             document.execCommand("copy");
             notify.suc(input_text_area.val() + " copied to clipboard!");
         });
 
+        // COPIES CONTENTS OF OUTPUT TEXT AREA TO USERS CLIPBOARD
         $("#copy_output").click(function(){
             output_text_area.select();
             document.execCommand('copy');
             notify.suc(output_text_area.val() + " copied to clipboard!");
         });
 
+        // HANDLES SWAPPING CUSTOM ENCODING INPUT/OUTPUT FROM KEY->VALUE to
+        // VALUE->KEY OR VICE-VERSA
         var swap_custom = $("#swap_custom");
         swap_custom.click(function(){
             var temp = input_text_area.val();
@@ -494,6 +472,8 @@ var CODEC = function(){
             }
         });
 
+        // HANDLES GENERAL SWAPPING OF INPUT/OUTPUT FORMAT AND TEXT AREAS
+        // FOR BOTH CUSTOM AND NON-CUSTOM ENCODINGS
         var swap_regular = $("#swap_regular");
         swap_regular.click(function(){
             if(input_format === FORMAT.CUSTOM){
@@ -571,6 +551,7 @@ var CODEC = function(){
             output_text_area.val(result);
         });
     }();
+    // END INPUT TEXT AREA BINDING
 
     // NOTY FUNCTIONALITY
     var notify = (function () {
