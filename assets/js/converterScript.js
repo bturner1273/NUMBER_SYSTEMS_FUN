@@ -27,6 +27,7 @@ var CODEC = function(){
         7: [{},{}],
         8: [{},{}]
     };
+    var custom_encoding_num_bits;
 
     var encodings_table = $(".encodings_table");
     function clearEncodingTable(){
@@ -103,12 +104,14 @@ var CODEC = function(){
             unhide_encodings_table();
             var load_dict_key_val = params["load_dict_key_val"];
             var load_dict_val_key = params["load_dict_val_key"];
-            custom_encoding_num_bits = params["custom_num_bits"];
+            // custom_encoding_num_bits = params["custom_num_bits"];
             load_dict_key_val = JSON.parse(window.atob(decodeURIComponent(load_dict_key_val)));
             load_dict_val_key = JSON.parse(window.atob(decodeURIComponent(load_dict_val_key)));
+            custom_encoding_num_bits = Number(params["custom_num_bits"]);
+            $("#custom_encoding_num_bits").text(custom_encoding_num_bits);
+            $("#bit_range").val(custom_encoding_num_bits);
             encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE] = load_dict_key_val;
             encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY] = load_dict_val_key;
-            console.log(encodings);
             loadEncodingTable();
             setTimeout(function(){
                 $("button[data-format='CUSTOM'").first().trigger('click');
@@ -303,7 +306,6 @@ var CODEC = function(){
 
         // CUSTOM ENCODING LOGIC
         var custom_encoding_format = indices.KEY_TO_VALUE;
-        var custom_encoding_num_bits;
 
         $("#bit_range").slider().on('input', function(){
             $("#custom_encoding_num_bits").text(this.value);
@@ -354,7 +356,7 @@ var CODEC = function(){
             }
         }
 
-        function getRegex(custom_encoding_num_bitsCHANGEME){
+        function getRegex(){
             var regex;
             switch(custom_encoding_num_bits){
                 case 1:
@@ -411,7 +413,7 @@ var CODEC = function(){
                     custom_values_input.val("");
                     return;
                 }
-
+                unhide_encodings_table();
                 bindLastTRButton();
                 encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
                 encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
