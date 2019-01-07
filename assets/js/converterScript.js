@@ -13,6 +13,62 @@ var CODEC = function(){
     var SPACES_REGEX = /\s/gi;
     var BINARY_REGEX = /^[01]+$/;
     var HEXADECIMAL_REGEX = /^[0-9A-Fa-f]*$/;
+    var indices = Object.freeze({"KEY_TO_VALUE" : 0, "VALUE_TO_KEY" : 1});
+
+
+    //GLOBAL
+    var encodings = {
+        1: [{},{}],
+        2: [{},{}],
+        3: [{},{}],
+        4: [{},{}],
+        5: [{},{}],
+        6: [{},{}],
+        7: [{},{}],
+        8: [{},{}]
+    };
+
+    var encodings_table = $(".encodings_table");
+    function clearEncodingTable(){
+        $(".encodings_table tr").each(function(){
+            $(this).remove();
+        });
+    }
+
+    var bindLastTRButton = function() {
+        $(".encodings_table button").each(function(){
+                $(this).last().click(function(){
+                delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+                delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
+                var this_button = $(this);
+                $(".encodings_table button").each(function(){
+                    if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
+                        $(this).closest("tr").remove();
+                    }
+                });
+                this_button.closest("tr").remove();
+            });
+        });
+    };
+
+    function loadEncodingTable(){
+        clearEncodingTable();
+        var dict_to_load = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+        if(Object.keys(dict_to_load).length == 0 || dict_to_load == null){
+            return;
+        }
+        var sorted_keys = [];
+        for(var i in dict_to_load){
+            sorted_keys.push(i);
+        }
+        sorted_keys = sorted_keys.sort();
+        for(var j in sorted_keys){
+            encodings_table.each(function(){
+                $(this).append("<tr><td>" + sorted_keys[j] +"</td><td><i class='far fa-arrow-right'></i></td><td>" + dict_to_load[sorted_keys[j].trim()] + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+            });
+            bindLastTRButton();
+        }
+    }
 
     // LOAD CODEC TO DISPLAY A SHARED CUSTOM ENCODING IF THE LINK CONTAINS
     // A SERIALIZED DICTIONARY
@@ -24,17 +80,39 @@ var CODEC = function(){
         return vars;
     }
 
+
+    var custom_bits_input = $("#custom_bits_input");
+    var custom_values_input = $("#custom_values_input");
+    function unhide_encodings_table(){
+        var val = custom_values_input.val().charAt(0) == " " ? "[space]" : custom_values_input.val().charAt(0);
+        encodings_table.each(function(){
+            if(encodings_table.is(":hidden")){
+                $(".encodings_table_wrapper").show();
+                $(".no_encodings_to_display").hide();
+            }
+            $(this).append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td><i class='far fa-arrow-right'></i></td><td class='value'>" + val + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
+        });
+    }
+
     handle_shareable_link = function(){
         // CHECK TO SEE IF THERE ARE ANY QUERY PARAMS
         // var decoded = JSON.parse(window.atob(decodeURIComponent(encoded)));
 
         var params = getUrlParams();
         if(Object.keys(params).length > 0){
+            unhide_encodings_table();
             var load_dict_key_val = params["load_dict_key_val"];
             var load_dict_val_key = params["load_dict_val_key"];
             custom_encoding_num_bits = params["custom_num_bits"];
             load_dict_key_val = JSON.parse(window.atob(decodeURIComponent(load_dict_key_val)));
             load_dict_val_key = JSON.parse(window.atob(decodeURIComponent(load_dict_val_key)));
+            encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE] = load_dict_key_val;
+            encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY] = load_dict_val_key;
+            console.log(encodings);
+            loadEncodingTable();
+            setTimeout(function(){
+                $("button[data-format='CUSTOM'").first().trigger('click');
+            }, 250)
         }
     }();
     // END LOAD CODEC
@@ -210,7 +288,6 @@ var CODEC = function(){
         // END INPUT/OUTPUT FORMAT TOGGLE CODE
 
         //NUM BITS INPUT ERROR CHECKING
-        var custom_bits_input = $("#custom_bits_input");
         custom_bits_input.bind("input", function(){
             if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
                 notify.err("You must write valid binary digits (1 and 0 only)");
@@ -225,21 +302,8 @@ var CODEC = function(){
         //END NUM BITS INPUT ERROR CHECKING
 
         // CUSTOM ENCODING LOGIC
-        var indices = Object.freeze({"KEY_TO_VALUE" : 0, "VALUE_TO_KEY" : 1});
         var custom_encoding_format = indices.KEY_TO_VALUE;
-        var encodings = {
-            1: [{},{}],
-            2: [{},{}],
-            3: [{},{}],
-            4: [{},{}],
-            5: [{},{}],
-            6: [{},{}],
-            7: [{},{}],
-            8: [{},{}]
-        };
         var custom_encoding_num_bits;
-        var custom_values_input = $("#custom_values_input");
-        var encodings_table = $(".encodings_table");
 
         $("#bit_range").slider().on('input', function(){
             $("#custom_encoding_num_bits").text(this.value);
@@ -247,47 +311,6 @@ var CODEC = function(){
             $("#custom_bits_input").attr("placeholder", this.value + " BIT(s)");
             loadEncodingTable();
         });
-
-        function clearEncodingTable(){
-            $(".encodings_table tr").each(function(){
-                $(this).remove();
-            });
-        }
-
-        var bindLastTRButton = function() {
-            $(".encodings_table button").each(function(){
-                    $(this).last().click(function(){
-                    delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
-                    delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
-                    var this_button = $(this);
-                    $(".encodings_table button").each(function(){
-                        if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
-                            $(this).closest("tr").remove();
-                        }
-                    });
-                    this_button.closest("tr").remove();
-                });
-            });
-        };
-
-        function loadEncodingTable(){
-            clearEncodingTable();
-            var dict_to_load = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
-            if(Object.keys(dict_to_load).length == 0 || dict_to_load == null){
-                return;
-            }
-            var sorted_keys = [];
-            for(var i in dict_to_load){
-                sorted_keys.push(i);
-            }
-            sorted_keys = sorted_keys.sort();
-            for(var j in sorted_keys){
-                encodings_table.each(function(){
-                    $(this).append("<tr><td>" + sorted_keys[j] +"</td><td><i class='far fa-arrow-right'></i></td><td>" + dict_to_load[sorted_keys[j].trim()] + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
-                });
-                bindLastTRButton();
-            }
-        }
 
         function updateEncodingOutputText(){
             if(custom_encoding_format === indices.KEY_TO_VALUE){
@@ -388,14 +411,7 @@ var CODEC = function(){
                     custom_values_input.val("");
                     return;
                 }
-                var val = custom_values_input.val().charAt(0) == " " ? "[space]" : custom_values_input.val().charAt(0);
-                encodings_table.each(function(){
-                    if(encodings_table.is(":hidden")){
-                        $(".encodings_table_wrapper").show();
-                        $(".no_encodings_to_display").hide();
-                    }
-                    $(this).append("<tr><td class='encoding'>" + custom_bits_input.val() + "</td><td><i class='far fa-arrow-right'></i></td><td class='value'>" + val + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
-                });
+
                 bindLastTRButton();
                 encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
                 encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
