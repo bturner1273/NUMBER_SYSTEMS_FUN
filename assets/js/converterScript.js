@@ -30,9 +30,11 @@ var CODEC = function(){
 
         var params = getUrlParams();
         if(Object.keys(params).length > 0){
-            var load_dict = params["load_dict"];
-            load_dict = JSON.parse(window.atob(decodeURIComponent(load_dict)));
-            console.log(load_dict);
+            var load_dict_key_val = params["load_dict_key_val"];
+            var load_dict_val_key = params["load_dict_val_key"];
+            custom_encoding_num_bits = params["custom_num_bits"];
+            load_dict_key_val = JSON.parse(window.atob(decodeURIComponent(load_dict_key_val)));
+            load_dict_val_key = JSON.parse(window.atob(decodeURIComponent(load_dict_val_key)));
         }
     }();
     // END LOAD CODEC
@@ -417,9 +419,13 @@ var CODEC = function(){
             // console.log("base64 string: " + encoded);
             // console.log("decoded object: " , decoded);
             if(encodings[custom_encoding_num_bits]){
-                var dict_to_encode = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
-                var encoded_dict = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode)));
-                var shareable_link = window.location.href + "?load_dict=" + encoded_dict;
+                var dict_to_encode_key_val = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+                var encoded_dict_key_val = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode_key_val)));
+                var dict_to_encode_val_key = encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY];
+                var encoded_dict_val_key = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode_val_key)));
+                var shareable_link = window.location.href + "?custom_num_bits="
+                            + custom_encoding_num_bits + "&load_dict_key_val=" + encoded_dict_key_val + "&load_dict_val_key="
+                            + encoded_dict_val_key;
                 copyStringToClipboard(shareable_link);
                 notify.suc("Shareable link copied to clipboard!");
             }else{
