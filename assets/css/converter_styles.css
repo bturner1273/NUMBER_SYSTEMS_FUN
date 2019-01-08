@@ -166,8 +166,8 @@ textarea:focus, textarea:active{
 
 .table-wrapper-scroll-y {
     display: block;
-    max-height: 200px;
-    overflow-y: scroll;
+    height: 200px;
+    overflow-y: auto;
 }
 
 #input_text_area {

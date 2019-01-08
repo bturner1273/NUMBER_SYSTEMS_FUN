@@ -398,12 +398,13 @@ var CODEC = function(){
             if(custom_bits_input.val().trim().length == custom_encoding_num_bits){
                 var invalid_encoding = false;
                 $(".encodings_table tr").each(function(){
-                    if($(this).find(".encoding").text() == custom_bits_input.val()){
+                    if ($(this).find(".encoding").text() == custom_bits_input.val()) {
                         notify.err("You may not overwrite your own keys. Key: " + custom_bits_input.val().trim() + " is already contained in the table");
                         invalid_encoding = true;
+                        return false;
                     }
                 });
-                if(invalid_encoding){
+                if (invalid_encoding) {
                     custom_bits_input.val("");
                     custom_values_input.val("");
                     return;
