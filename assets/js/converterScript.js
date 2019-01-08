@@ -296,7 +296,7 @@ var CODEC = function(){
 
         $("#share_website_button").click(function(){
             copyStringToClipboard(window.location.href);
-            notify.suc("Site link copied to clipboard!") 
+            notify.suc("Site link copied to clipboard");
         })
 
         // CUSTOM ENCODING LOGIC
@@ -509,7 +509,6 @@ var CODEC = function(){
         // INPUT TEXT AREA BINDING
         input_text_area.bind("input", function(){
             var inp_val = input_text_area.val();
-            // TODO double check logic here
             if(!(inp_val.trim().length != 0 && inp_val != null)){
                 output_text_area.val("");
                 return;
@@ -519,12 +518,14 @@ var CODEC = function(){
                 if(!BINARY_REGEX.test(inp_val.replace(SPACES_REGEX,"").trim())){
                     notify.err("You must write valid binary if you choose to use it as your input format (1 and 0 only)");
                     input_text_area.val(inp_val.slice(0, inp_val.length-1));
+                    return;
                 }
             }
             if(input_format === FORMAT.HEXADECIMAL){
                 if(!HEXADECIMAL_REGEX.test(inp_val.replace(SPACES_REGEX,"").trim())){
                     notify.err("You must write valid hex if you choose to use it as your input format (0-9, a-f, and A-F only)");
                     input_text_area.val(inp_val.slice(0, inp_val.length-1));
+                    return;
                 }
             }
 
