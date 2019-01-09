@@ -289,6 +289,15 @@ var CODEC = function(){
         button_toggler(output_buttons, "output-button-active", false);
         // END INPUT/OUTPUT FORMAT TOGGLE CODE
 
+        // CUSTOM_VALUES_INPUT ERROR CHECKING
+        custom_values_input.bind("input", function(){
+            if(custom_values_input.val().length > 1){
+                custom_values_input.val(custom_values_input.val()[0]);
+                notify.err("Your encoding values must only be one character");
+            }
+        });
+        // END CUSTOM_VALUES_INPUT ERROR CHECKING
+
         //NUM BITS INPUT ERROR CHECKING
         custom_bits_input.bind("input", function(){
             if(!BINARY_REGEX.test(custom_bits_input.val().trim()) && custom_bits_input.val().length != 0){
