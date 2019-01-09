@@ -123,7 +123,7 @@ var CODEC = function(){
             encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY] = load_dict_val_key;
             loadEncodingTable();
             setTimeout(function(){
-                $("button[data-format='CUSTOM'").first().trigger('click');
+                $("button[data-format='CUSTOM'").first().trigger("click");
             }, 250)
         }
     }();
@@ -236,7 +236,7 @@ var CODEC = function(){
             button_list.each(function(){
                 var this_button = $(this);
                 this_button.click(function(){
-                    if(this_button.attr('data-format') === "CUSTOM"){
+                    if(this_button.attr("data-format") === "CUSTOM"){
                         $("#input_div").addClass("border-bottom");
                         $("#custom_encodings_div").slideDown();
                         $("button").each(function(){
@@ -260,7 +260,7 @@ var CODEC = function(){
                         toggle_format($(this), input);
                         return;
                     }else  {
-                        if($('#custom_encodings_div').is(":visible")){
+                        if($("#custom_encodings_div").is(":visible")){
                             $("#custom_encodings_div").slideUp();
                             var output_button_list = $("#output_button_row").find("button");
                             output_button_list.each(function(index){
@@ -321,7 +321,7 @@ var CODEC = function(){
         // CUSTOM ENCODING LOGIC
         var custom_encoding_format = INDICES.KEY_TO_VALUE;
 
-        $("#bit_range").slider().on('input', function(){
+        $("#bit_range").slider().on("input", function(){
             $("#custom_encoding_num_bits").text(this.value);
             custom_encoding_num_bits = Number($("#custom_encoding_num_bits").text());
             $("#custom_bits_input").attr("placeholder", this.value + " BIT(s)");
@@ -463,13 +463,13 @@ var CODEC = function(){
 
         // TAKES STRING PARAMETER AND COPIES TO USERS CLIPBOARD
         var copyStringToClipboard = function(str) {
-           var el = document.createElement('textarea');
+           var el = document.createElement("textarea");
            el.value = str;
-           el.setAttribute('readonly', '');
-           el.style = {position: 'absolute', left: '-9999px'};
+           el.setAttribute("readonly", "");
+           el.style = {position: "absolute", left: "-9999px"};
            document.body.appendChild(el);
            el.select();
-           document.execCommand('copy');
+           document.execCommand("copy");
            document.body.removeChild(el);
         }
 
@@ -483,7 +483,7 @@ var CODEC = function(){
         // COPIES CONTENTS OF OUTPUT TEXT AREA TO USERS CLIPBOARD
         $("#copy_output").click(function(){
             output_text_area.select();
-            document.execCommand('copy');
+            document.execCommand("copy");
             notify.suc(output_text_area.val() + " copied to clipboard!");
         });
 
@@ -508,7 +508,7 @@ var CODEC = function(){
         var swap_regular = $("#swap_regular");
         swap_regular.click(function(){
             if(input_format === FORMAT.CUSTOM){
-                swap_custom.trigger('click');
+                swap_custom.trigger("click");
             }else{
                 // save value of text areas before they are cleared on click trigger
                 var input_text = input_text_area.val();
