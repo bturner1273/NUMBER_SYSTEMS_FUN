@@ -13,7 +13,8 @@ var CODEC = function(){
     var SPACES_REGEX = /\s/gi;
     var BINARY_REGEX = /^[01]+$/;
     var HEXADECIMAL_REGEX = /^[0-9A-Fa-f]*$/;
-    var indices = Object.freeze({"KEY_TO_VALUE" : 0, "VALUE_TO_KEY" : 1});
+    var INDICES = Object.freeze({"KEY_TO_VALUE" : 0, "VALUE_TO_KEY" : 1});
+    var MAX_URL_LENGTH = 2083;
 
 
     //GLOBAL
@@ -39,8 +40,8 @@ var CODEC = function(){
     var bindLastTRButton = function() {
         $(".encodings_table button").each(function(){
                 $(this).last().click(function(){
-                delete encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
-                delete encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
+                delete encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE][$(this).closest("tr").find(".encoding").text().trim()];
+                delete encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY][$(this).closest("tr").find(".value").text().trim()];
                 var this_button = $(this);
                 $(".encodings_table button").each(function(){
                     if($($($(this).closest("tr")).children().get(0)).html() === $(this_button.closest("tr").children().get(0)).html()){
@@ -54,7 +55,7 @@ var CODEC = function(){
 
     var loadEncodingTable = function(){
         clearEncodingTable();
-        var dict_to_load = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+        var dict_to_load = encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE];
         if(Object.keys(dict_to_load).length == 0 || dict_to_load == null){
             return;
         }
@@ -118,8 +119,8 @@ var CODEC = function(){
             custom_encoding_num_bits = Number(params["custom_num_bits"]);
             $("#custom_encoding_num_bits").text(custom_encoding_num_bits);
             $("#bit_range").val(custom_encoding_num_bits);
-            encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE] = load_dict_key_val;
-            encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY] = load_dict_val_key;
+            encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE] = load_dict_key_val;
+            encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY] = load_dict_val_key;
             loadEncodingTable();
             setTimeout(function(){
                 $("button[data-format='CUSTOM'").first().trigger('click');
@@ -318,7 +319,7 @@ var CODEC = function(){
         })
 
         // CUSTOM ENCODING LOGIC
-        var custom_encoding_format = indices.KEY_TO_VALUE;
+        var custom_encoding_format = INDICES.KEY_TO_VALUE;
 
         $("#bit_range").slider().on('input', function(){
             $("#custom_encoding_num_bits").text(this.value);
@@ -328,7 +329,7 @@ var CODEC = function(){
         });
 
         var updateEncodingOutputText = function(){
-            if(custom_encoding_format === indices.KEY_TO_VALUE){
+            if(custom_encoding_format === INDICES.KEY_TO_VALUE){
                 var editorVal = input_text_area.val();
                 if(editorVal !== null && editorVal !== "")
                 if(!BINARY_REGEX.test(editorVal.replace(SPACES_REGEX, ""))){
@@ -341,7 +342,7 @@ var CODEC = function(){
                     if(keyList){
                         for(var i = 0; i < keyList.length; i++){
                             if(encodings[custom_encoding_num_bits]){
-                                strResult += encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][keyList[i]];
+                                strResult += encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE][keyList[i]];
                             }
                         }
                         strResult = strResult.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
@@ -352,13 +353,13 @@ var CODEC = function(){
                     }
                 }
             }
-            if(custom_encoding_format === indices.VALUE_TO_KEY){
+            if(custom_encoding_format === INDICES.VALUE_TO_KEY){
                 var valueList = input_text_area.val().match(/.{1,1}/g);
                 var result = "";
                 if(valueList){
                     for(var j = 0; j < valueList.length; j++){
                         if(encodings[custom_encoding_num_bits]){
-                            result += encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][valueList[j]];
+                            result += encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY][valueList[j]];
                         }
                     }
                     result = result.replace(/undefined/g, "?".repeat(custom_encoding_num_bits));
@@ -429,8 +430,8 @@ var CODEC = function(){
                 }
                 unhide_encodings_table();
                 bindLastTRButton();
-                encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
-                encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
+                encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE][custom_bits_input.val().trim()] = custom_values_input.val().charAt(0);
+                encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY][custom_values_input.val().charAt(0)] = custom_bits_input.val().trim();
             }else{
                 notify.err("Your number of bits must match the bit length you set and you must have a value of length 1 for the encoding key");
             }
@@ -440,13 +441,19 @@ var CODEC = function(){
 
         $("#share_encodings_table").click(function(){
             if(encodings[custom_encoding_num_bits]){
-                var dict_to_encode_key_val = encodings[custom_encoding_num_bits][indices.KEY_TO_VALUE];
+                var dict_to_encode_key_val = encodings[custom_encoding_num_bits][INDICES.KEY_TO_VALUE];
                 var encoded_dict_key_val = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode_key_val)));
-                var dict_to_encode_val_key = encodings[custom_encoding_num_bits][indices.VALUE_TO_KEY];
+                var dict_to_encode_val_key = encodings[custom_encoding_num_bits][INDICES.VALUE_TO_KEY];
                 var encoded_dict_val_key = encodeURIComponent(window.btoa(JSON.stringify(dict_to_encode_val_key)));
                 var shareable_link = window.location.href + "?custom_num_bits="
                             + custom_encoding_num_bits + "&load_dict_key_val=" + encoded_dict_key_val + "&load_dict_val_key="
                             + encoded_dict_val_key;
+
+                // CHECK IF SHAREABLE_LINK EXCEEDS MAX URL LENGTH
+                if(shareable_link.length > MAX_URL_LENGTH){
+                    notify.err("Your shareable link exceeds the maximum length of a url, delete a few entries from your custom encoding list and retry");
+                    return;
+                }
                 copyStringToClipboard(shareable_link);
                 notify.suc("Shareable link copied to clipboard!");
             }else{
@@ -487,11 +494,11 @@ var CODEC = function(){
             var temp = input_text_area.val();
             input_text_area.val(output_text_area.val());
             output_text_area.val(temp);
-            if(custom_encoding_format === indices.KEY_TO_VALUE){
-                custom_encoding_format = indices.VALUE_TO_KEY;
+            if(custom_encoding_format === INDICES.KEY_TO_VALUE){
+                custom_encoding_format = INDICES.VALUE_TO_KEY;
                 swap_custom.text("Value -> Key");
             }else{
-                custom_encoding_format = indices.KEY_TO_VALUE;
+                custom_encoding_format = INDICES.KEY_TO_VALUE;
                 swap_custom.text("Key -> Value");
             }
         });
