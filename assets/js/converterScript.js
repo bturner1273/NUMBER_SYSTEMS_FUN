@@ -96,8 +96,17 @@ var CODEC = function(){
              + "</td><td class='text-center'><button class='deleteKeyValuePair btn btn-sm btn-warning'><i class='fas fa-times'></i></button></td></tr>");
         });
     }
-
     // LOAD CODEC TO DISPLAY A SHARED CUSTOM ENCODING IF THE LINK CONTAINS
+
+    // CUSTOM_VALUES_INPUT SHOULD HANDLE ENTER KEY PRESS LIKE SUBMIT ENCODING
+      custom_values_input.keypress(function(e){
+          var keypressed = e.keyCode ? e.keyCode : e.which;
+          if(keypressed == 13){
+              $("#submit_encoding").click();
+          }
+      })
+    // END CUSTOM_VALUES_INPUT KEYPRESS BINDING
+
     // A SERIALIZED DICTIONARY
     handle_shareable_link = function(){
         var params = getUrlParams();
